@@ -3,441 +3,960 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Az én személyi számítógépem</title>
-<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet"/>
+<title>3D Nyomtató - Túlélős Játék</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
+*{margin:0;padding:0;box-sizing:border-box;}
 body{
-  font-family:'MS Sans Serif',Arial,sans-serif;
-  font-size:11px;
-  background:#008080;
-  min-height:100vh;
+  background:#0a0a0f;
+  font-family:'Share Tech Mono',monospace;
+  color:#e0e0e0;
   overflow:hidden;
-  cursor:default;
-  user-select:none;
+  height:100vh;
+  display:flex;
+  flex-direction:column;
 }
-#desktop{
-  width:100vw;
-  height:calc(100vh - 28px);
+
+/* HUD */
+#hud{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:8px 20px;
+  background:rgba(0,0,0,0.8);
+  border-bottom:1px solid #ff6a00;
+  flex-shrink:0;
+  gap:10px;
+}
+.hud-panel{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  min-width:180px;
+}
+.hud-panel.right{ align-items:flex-end; }
+.hud-label{
+  font-size:10px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:#888;
+}
+.hud-name{
+  font-family:'Orbitron',sans-serif;
+  font-size:13px;
+  font-weight:700;
+}
+.hp-bar-wrap{
+  width:160px;height:10px;
+  background:#1a1a1a;
+  border:1px solid #333;
+  border-radius:2px;
+  overflow:hidden;
+}
+.hp-bar{
+  height:100%;
+  border-radius:2px;
+  transition:width 0.2s, background 0.3s;
+}
+.hp-bar.survivor{ background:linear-gradient(90deg,#00c853,#69f0ae); }
+.hp-bar.controller{ background:linear-gradient(90deg,#ff6a00,#ee0979); }
+
+.hud-center{
+  text-align:center;
+  flex:1;
+}
+.round-timer{
+  font-family:'Orbitron',sans-serif;
+  font-size:28px;
+  font-weight:900;
+  color:#ff6a00;
+  text-shadow:0 0 20px #ff6a00;
+  line-height:1;
+}
+.round-label{
+  font-size:10px;
+  letter-spacing:3px;
+  color:#666;
+  margin-top:2px;
+}
+.score-display{
+  font-family:'Orbitron',sans-serif;
+  font-size:12px;
+  color:#ff6a00;
+  margin-top:4px;
+}
+
+/* CANVAS WRAPPER */
+#game-wrap{
+  flex:1;
   position:relative;
   overflow:hidden;
 }
-.desktop-icon{
+#gameCanvas{
+  display:block;
+  width:100%;
+  height:100%;
+}
+
+/* OVERLAYS */
+.overlay{
   position:absolute;
+  inset:0;
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:4px;
-  padding:6px;
+  justify-content:center;
+  background:rgba(0,0,0,0.88);
+  z-index:100;
+  gap:20px;
+}
+.overlay-title{
+  font-family:'Orbitron',sans-serif;
+  font-size:clamp(28px,5vw,52px);
+  font-weight:900;
+  text-align:center;
+  line-height:1.1;
+}
+.overlay-title .accent{ color:#ff6a00; }
+.overlay-sub{
+  font-size:14px;
+  color:#888;
+  text-align:center;
+  max-width:500px;
+  line-height:1.8;
+}
+.big-btn{
+  padding:14px 40px;
+  background:transparent;
+  border:2px solid #ff6a00;
+  color:#ff6a00;
+  font-family:'Orbitron',sans-serif;
+  font-size:16px;
+  font-weight:700;
+  letter-spacing:3px;
   cursor:pointer;
-  width:80px;
-  border:1px solid transparent;
-  color:white;
+  transition:all 0.2s;
+  text-transform:uppercase;
 }
-.desktop-icon:hover{ background:rgba(0,0,128,0.4); border:1px dotted rgba(255,255,255,0.6); }
-.desktop-icon.selected{ background:rgba(0,0,128,0.6); border:1px dotted white; }
-.icon-img{ font-size:32px; line-height:1; }
-.icon-label{ font-size:11px; text-align:center; word-break:break-word; color:white; text-shadow:1px 1px 2px #000,-1px -1px 2px #000; }
+.big-btn:hover{
+  background:#ff6a00;
+  color:#000;
+  box-shadow:0 0 30px #ff6a00;
+}
+.controls-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
+  max-width:600px;
+  width:100%;
+  padding:0 20px;
+}
+.control-box{
+  background:#111;
+  border:1px solid #333;
+  padding:16px;
+  border-radius:4px;
+}
+.control-box h3{
+  font-family:'Orbitron',sans-serif;
+  font-size:12px;
+  color:#ff6a00;
+  margin-bottom:10px;
+  letter-spacing:2px;
+}
+.control-box p{
+  font-size:11px;
+  color:#888;
+  line-height:2;
+}
+.key{
+  display:inline-block;
+  background:#222;
+  border:1px solid #555;
+  border-bottom:2px solid #777;
+  padding:1px 6px;
+  border-radius:3px;
+  font-size:11px;
+  color:#ddd;
+}
 
-.window{
+/* ROUND END */
+#round-end .winner-text{
+  font-family:'Orbitron',sans-serif;
+  font-size:clamp(16px,3vw,26px);
+  color:#69f0ae;
+  text-align:center;
+}
+#round-end .winner-text.controller-win{ color:#ff6a00; }
+
+/* SCANLINE EFFECT */
+#game-wrap::after{
+  content:'';
   position:absolute;
-  background:#c0c0c0;
-  border-top:2px solid #fff;
-  border-left:2px solid #fff;
-  border-right:2px solid #404040;
-  border-bottom:2px solid #404040;
-  min-width:280px;min-height:150px;
-  display:none;flex-direction:column;
-  box-shadow:2px 2px 0 #000;
+  inset:0;
+  background:repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+  pointer-events:none;
+  z-index:5;
 }
-.titlebar{
-  background:linear-gradient(90deg,#000080,#1084d0);
-  color:white;padding:3px 4px;
-  display:flex;align-items:center;justify-content:space-between;
-  cursor:move;height:22px;flex-shrink:0;
+
+/* SCORE BOARD */
+.score-board{
+  display:flex;
+  gap:30px;
+  margin-top:10px;
 }
-.titlebar-left{ display:flex;align-items:center;gap:4px;font-weight:bold;font-size:11px; }
-.titlebar-buttons{ display:flex;gap:2px; }
-.win-btn{
-  width:16px;height:16px;background:#c0c0c0;
-  border-top:1px solid #fff;border-left:1px solid #fff;
-  border-right:1px solid #404040;border-bottom:1px solid #404040;
-  font-size:9px;display:flex;align-items:center;justify-content:center;
-  cursor:pointer;font-weight:bold;color:#000;
+.score-item{
+  text-align:center;
 }
-.win-btn:active{ border-top:1px solid #404040;border-left:1px solid #404040;border-right:1px solid #fff;border-bottom:1px solid #fff; }
-.menubar{ background:#c0c0c0;border-bottom:1px solid #808080;display:flex;padding:1px 2px;flex-shrink:0; }
-.menu-item{ padding:2px 6px;cursor:pointer;font-size:11px; }
-.menu-item:hover{ background:#000080;color:white; }
-.window-body{ flex:1;padding:8px;overflow-y:auto;background:#c0c0c0;font-size:11px;line-height:1.6; }
-.inset{ background:#fff;border-top:1px solid #404040;border-left:1px solid #404040;border-right:1px solid #fff;border-bottom:1px solid #fff;padding:8px;margin-bottom:8px; }
-.outset{ background:#c0c0c0;border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:1px solid #404040;padding:6px 10px;margin-bottom:6px;cursor:pointer; }
-.outset:active{ border-top:1px solid #404040;border-left:1px solid #404040;border-right:1px solid #fff;border-bottom:1px solid #fff; }
+.score-num{
+  font-family:'Orbitron',sans-serif;
+  font-size:36px;
+  font-weight:900;
+}
+.score-num.s{ color:#69f0ae; }
+.score-num.c{ color:#ff6a00; }
+.score-lbl{ font-size:10px; color:#666; letter-spacing:2px; }
 
-#taskbar{ position:fixed;bottom:0;left:0;right:0;height:28px;background:#c0c0c0;border-top:2px solid #fff;display:flex;align-items:center;gap:2px;padding:0 2px;z-index:9999; }
-#start-btn{ display:flex;align-items:center;gap:4px;padding:2px 8px;background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #404040;border-bottom:2px solid #404040;cursor:pointer;font-weight:bold;font-size:12px;height:22px;flex-shrink:0; }
-#start-btn:active,#start-btn.pressed{ border-top:2px solid #404040;border-left:2px solid #404040;border-right:2px solid #fff;border-bottom:2px solid #fff; }
-.task-btn{ display:flex;align-items:center;gap:4px;padding:2px 8px;background:#c0c0c0;border-top:1px solid #fff;border-left:1px solid #fff;border-right:1px solid #404040;border-bottom:1px solid #404040;cursor:pointer;font-size:11px;height:22px;min-width:100px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
-.task-btn.active-task{ border-top:1px solid #404040;border-left:1px solid #404040;border-right:1px solid #fff;border-bottom:1px solid #fff;background:#b0b0b0; }
-#clock{ margin-left:auto;padding:2px 8px;border-top:1px solid #404040;border-left:1px solid #404040;border-right:1px solid #fff;border-bottom:1px solid #fff;font-size:11px;flex-shrink:0; }
-
-#start-menu{ position:fixed;bottom:28px;left:0;width:180px;background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #404040;border-bottom:2px solid #404040;display:none;z-index:99999;box-shadow:2px 2px 0 #000; }
-.start-sidebar{ position:absolute;top:0;left:0;width:22px;bottom:0;background:linear-gradient(180deg,#000080,#1084d0);display:flex;align-items:flex-end;padding-bottom:6px; }
-.start-sidebar span{ color:white;font-size:14px;font-weight:bold;writing-mode:vertical-rl;text-orientation:mixed;transform:rotate(180deg);letter-spacing:2px; }
-.start-items{ margin-left:22px;padding:2px 0; }
-.start-item{ display:flex;align-items:center;gap:8px;padding:5px 10px;cursor:pointer;font-size:11px; }
-.start-item:hover{ background:#000080;color:white; }
-.start-separator{ height:1px;background:#808080;margin:2px 0;border-bottom:1px solid #fff; }
-
-.win98-input{ background:#fff;border-top:1px solid #404040;border-left:1px solid #404040;border-right:1px solid #fff;border-bottom:1px solid #fff;padding:3px 5px;font-size:11px;font-family:Arial,sans-serif;width:100%;margin-bottom:4px;outline:none; }
-
-.marquee-text{ background:#000080;color:#ffff00;padding:2px 0;font-size:12px;font-weight:bold;overflow:hidden;white-space:nowrap;position:absolute;top:0;left:0;right:0;z-index:10; }
-.marquee-inner{ display:inline-block;animation:marquee 14s linear infinite; }
-@keyframes marquee{ 0%{transform:translateX(100vw);} 100%{transform:translateX(-100%);} }
-
-.media-btn{ display:inline-flex;align-items:center;justify-content:center;width:28px;height:22px;background:#333;color:#0f0;border:1px solid;border-color:#555 #111 #111 #555;font-size:13px;cursor:pointer;margin-right:2px; }
-.media-btn:active{ border-color:#111 #555 #555 #111; }
-
-#bsod{ display:none;position:fixed;inset:0;background:#0000aa;color:white;font-family:'Courier New',monospace;font-size:14px;z-index:9999999;padding:40px; }
-@keyframes blink2{ 0%,100%{opacity:1} 50%{opacity:0} }
+#flash{
+  position:absolute;
+  inset:0;
+  background:rgba(255,100,0,0.15);
+  pointer-events:none;
+  opacity:0;
+  z-index:10;
+  transition:opacity 0.1s;
+}
 </style>
 </head>
 <body>
 
-<div id="desktop" onclick="deselectAll()">
-  <div class="marquee-text">
-    <span class="marquee-inner">🌟 Üdvözöllek az én személyi oldalamon! 🌟 &nbsp;&nbsp;&nbsp; Legjobban néz ki 800x600-as felbontásban! &nbsp;&nbsp;&nbsp; IE 4.0-ra optimalizálva! &nbsp;&nbsp;&nbsp; 🚧 Az oldal épül 🚧 &nbsp;&nbsp;&nbsp; Látogatók száma: 000069 &nbsp;&nbsp;&nbsp; Utolsó frissítés: 1998. március 4. &nbsp;&nbsp;&nbsp;</span>
-  </div>
-
-  <!-- ICONS -->
-  <div class="desktop-icon" style="top:50px;left:20px;" ondblclick="openWindow('about')" onclick="selectIcon(this,event)">
-    <div class="icon-img">🖥️</div><div class="icon-label">Rólam.txt</div>
-  </div>
-  <div class="desktop-icon" style="top:145px;left:20px;" ondblclick="openWindow('projects')" onclick="selectIcon(this,event)">
-    <div class="icon-img">📁</div><div class="icon-label">Projektek</div>
-  </div>
-  <div class="desktop-icon" style="top:240px;left:20px;" ondblclick="openWindow('music')" onclick="selectIcon(this,event)">
-    <div class="icon-img">🎵</div><div class="icon-label">Winamp</div>
-  </div>
-  <div class="desktop-icon" style="top:335px;left:20px;" ondblclick="openWindow('guestbook')" onclick="selectIcon(this,event)">
-    <div class="icon-img">📝</div><div class="icon-label">Vendégkönyv</div>
-  </div>
-  <div class="desktop-icon" style="top:50px;left:110px;" ondblclick="openWindow('error')" onclick="selectIcon(this,event)">
-    <div class="icon-img">🗑️</div><div class="icon-label">Lomtár</div>
-  </div>
-  <div class="desktop-icon" style="top:145px;left:110px;" ondblclick="showBsod()" onclick="selectIcon(this,event)">
-    <div class="icon-img">⚠️</div><div class="icon-label">Ne nyisd meg</div>
-  </div>
-
-  <!-- ABOUT WINDOW -->
-  <div class="window" id="win-about" style="left:160px;top:55px;width:400px;height:310px;">
-    <div class="titlebar" onmousedown="startDrag(event,'win-about')">
-      <div class="titlebar-left"><span>🖥️</span> Rólam.txt - Notepad</div>
-      <div class="titlebar-buttons">
-        <div class="win-btn" onclick="minimizeWindow('about')">_</div>
-        <div class="win-btn">□</div>
-        <div class="win-btn" onclick="closeWindow('about')">✕</div>
-      </div>
+<!-- HUD -->
+<div id="hud">
+  <div class="hud-panel">
+    <div class="hud-label">🟢 Túlélő — WASD</div>
+    <div class="hud-name" id="survivor-name">TÚLÉLŐ</div>
+    <div class="hp-bar-wrap">
+      <div class="hp-bar survivor" id="survivor-hp" style="width:100%"></div>
     </div>
-    <div class="menubar"><span class="menu-item">Fájl</span><span class="menu-item">Szerkesztés</span><span class="menu-item">Súgó</span></div>
-    <div class="window-body" style="background:#fff;font-family:'Courier New',monospace;font-size:12px;">
-<pre style="font-family:'Courier New',monospace;font-size:12px;line-height:1.7;">==============================
-       RÓLAM.TXT  v1.0
-==============================
-
-Szia! 👋
-
-Valaki vagyok aki szeret:
-  ✅ Weboldalakat csinálni
-  ✅ Éjjel kódolni
-  ✅ Kávét inni ☕
-  ✅ Unatkozni (ilyenkor születnek
-     az ilyen oldalak)
-  ❌ Reggel 6-kor felkelni
-
-Lakhely: Magyarország 🇭🇺
-Hobbi: minden ami érdekes
-
-📧 email@example.com
-🐙 github.com/nevedide
-
--- EOF --</pre>
-    </div>
+    <div style="font-size:11px;color:#69f0ae;" id="survivor-hp-txt">100 HP</div>
   </div>
 
-  <!-- PROJECTS WINDOW -->
-  <div class="window" id="win-projects" style="left:210px;top:80px;width:440px;height:340px;">
-    <div class="titlebar" onmousedown="startDrag(event,'win-projects')">
-      <div class="titlebar-left"><span>📁</span> Projektek</div>
-      <div class="titlebar-buttons">
-        <div class="win-btn" onclick="minimizeWindow('projects')">_</div>
-        <div class="win-btn">□</div>
-        <div class="win-btn" onclick="closeWindow('projects')">✕</div>
-      </div>
-    </div>
-    <div class="menubar"><span class="menu-item">Fájl</span><span class="menu-item">Nézet</span><span class="menu-item">Súgó</span></div>
-    <div class="window-body">
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;">
-        <span style="font-size:16px;">📁</span>
-        <span style="font-weight:bold;">C:\Felhasználók\Én\Projektek</span>
-      </div>
-      <div class="outset" onclick="alert('Ez a projekt még épül! 🚧')">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span style="font-size:20px;">🌐</span>
-          <div><div style="font-weight:bold;">web_projekt.html</div><div style="color:#808080;font-size:10px;">HTML Document • 24 KB • 2024.01.15</div></div>
-        </div>
-      </div>
-      <div class="outset" onclick="alert('Módosítva: tegnap éjjel 2-kor 😴')">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span style="font-size:20px;">🐍</span>
-          <div><div style="font-weight:bold;">script.py</div><div style="color:#808080;font-size:10px;">Python Script • 8 KB • tegnap</div></div>
-        </div>
-      </div>
-      <div class="outset" onclick="alert('Ez tényleg jó lett! ⭐')">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span style="font-size:20px;">🎮</span>
-          <div><div style="font-weight:bold;">jatek_proba</div><div style="color:#808080;font-size:10px;">Mappa • 3 fájl • 2024.02.01</div></div>
-        </div>
-      </div>
-      <div class="outset" onclick="alert('Ezt ne nyisd meg... 👀')">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span style="font-size:20px;">🗂️</span>
-          <div><div style="font-weight:bold;">titkos_mappa</div><div style="color:#808080;font-size:10px;">Mappa • ??? fájl</div></div>
-        </div>
-      </div>
-      <div style="margin-top:8px;border-top:1px solid #808080;padding-top:6px;color:#808080;">4 objektum • Szabad hely: 1.2 GB</div>
-    </div>
+  <div class="hud-center">
+    <div class="round-timer" id="timer">2:00</div>
+    <div class="round-label">KÖR IDŐ</div>
+    <div class="score-display" id="score-hud">S: 0 — C: 0</div>
   </div>
 
-  <!-- WINAMP WINDOW -->
-  <div class="window" id="win-music" style="left:190px;top:100px;width:320px;height:290px;">
-    <div class="titlebar" onmousedown="startDrag(event,'win-music')">
-      <div class="titlebar-left"><span>🎵</span> Winamp 2.95</div>
-      <div class="titlebar-buttons">
-        <div class="win-btn" onclick="minimizeWindow('music')">_</div>
-        <div class="win-btn">□</div>
-        <div class="win-btn" onclick="closeWindow('music')">✕</div>
-      </div>
+  <div class="hud-panel right">
+    <div class="hud-label">Nyilak + Space — CONTROLLER 🔴</div>
+    <div class="hud-name" id="controller-name">CONTROLLER</div>
+    <div class="hp-bar-wrap">
+      <div class="hp-bar controller" id="controller-ammo" style="width:100%"></div>
     </div>
-    <div class="window-body" style="background:#1a1a2e;color:#00ff00;font-family:'VT323',monospace;padding:6px;">
-      <div style="background:#000;padding:8px;margin-bottom:8px;border:1px solid #00ff00;">
-        <div style="font-size:11px;color:#888;font-family:Arial;">MOST JÁTSZIK:</div>
-        <div style="font-size:16px;color:#00ff00;" id="now-playing">► Darude - Sandstorm</div>
-        <div style="display:flex;justify-content:space-between;font-size:11px;color:#666;margin-top:4px;font-family:Arial;">
-          <span>1:23 / 3:45</span><span>128 kbps</span>
-        </div>
-        <div style="background:#003300;height:6px;margin-top:6px;border:1px solid #00aa00;overflow:hidden;">
-          <div id="prog-bar" style="background:#00ff00;height:100%;width:35%;transition:width 0.5s;"></div>
-        </div>
-      </div>
-      <div style="display:flex;gap:2px;margin-bottom:8px;justify-content:center;">
-        <div class="media-btn" onclick="prevTrack()">⏮</div>
-        <div class="media-btn" id="play-btn" onclick="togglePlay()">⏸</div>
-        <div class="media-btn" onclick="nextTrack()">⏭</div>
-        <div class="media-btn" onclick="stopMusic()">⏹</div>
-      </div>
-      <div style="border-top:1px solid #003300;padding-top:4px;">
-        <div style="font-size:12px;color:#888;margin-bottom:2px;font-family:Arial;">LEJÁTSZÁSI LISTA:</div>
-        <div id="playlist" style="font-size:13px;"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- GUESTBOOK WINDOW -->
-  <div class="window" id="win-guestbook" style="left:170px;top:70px;width:360px;height:370px;">
-    <div class="titlebar" onmousedown="startDrag(event,'win-guestbook')">
-      <div class="titlebar-left"><span>📝</span> Vendégkönyv</div>
-      <div class="titlebar-buttons">
-        <div class="win-btn" onclick="minimizeWindow('guestbook')">_</div>
-        <div class="win-btn">□</div>
-        <div class="win-btn" onclick="closeWindow('guestbook')">✕</div>
-      </div>
-    </div>
-    <div class="menubar"><span class="menu-item">Fájl</span></div>
-    <div class="window-body">
-      <div class="inset" style="margin-bottom:10px;">
-        <div style="font-weight:bold;margin-bottom:6px;">✍️ Írj be valamit!</div>
-        <input class="win98-input" id="gb-name" placeholder="Neved"/>
-        <textarea class="win98-input" id="gb-msg" placeholder="Üzeneted..." rows="3" style="resize:none;"></textarea>
-        <div class="outset" style="display:inline-block;" onclick="addGuestEntry()">Beírás!</div>
-      </div>
-      <div id="gb-entries"></div>
-    </div>
-  </div>
-
-  <!-- ERROR WINDOW -->
-  <div class="window" id="win-error" style="left:320px;top:220px;width:300px;height:150px;">
-    <div class="titlebar" onmousedown="startDrag(event,'win-error')" style="background:linear-gradient(90deg,#800000,#cc0000);">
-      <div class="titlebar-left"><span>❌</span> Hiba</div>
-      <div class="titlebar-buttons"><div class="win-btn" onclick="closeWindow('error')">✕</div></div>
-    </div>
-    <div class="window-body" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;">
-      <div style="font-size:28px;">💥</div>
-      <div style="font-weight:bold;">Általános védelmi hiba</div>
-      <div style="color:#808080;font-size:10px;">A program egy ismeretlen hibát okozott.</div>
-      <div style="display:flex;gap:8px;margin-top:4px;">
-        <div class="outset" onclick="closeWindow('error')" style="padding:3px 16px;">OK</div>
-        <div class="outset" onclick="alert('Ugyanaz az eredmény 😈')" style="padding:3px 16px;">Mégse</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- BSOD -->
-  <div id="bsod" style="display:none;position:fixed;inset:0;background:#0000aa;color:white;font-family:'Courier New',monospace;font-size:14px;z-index:9999999;padding:40px;">
-    <p style="background:gray;color:#0000aa;padding:2px 8px;display:inline-block;margin-bottom:20px;">Windows</p>
-    <p style="margin-bottom:16px;">Egy végzetes hiba lépett fel és a Windows leállt hogy megóvja a számítógépedet.</p>
-    <p style="margin-bottom:16px;">STOP: 0x0000006B PROCESS1_INITIALIZATION_FAILED</p>
-    <p style="margin-bottom:24px;">Ha ez az első alkalom hogy ez a képernyő megjelenik,<br>indítsd újra a számítógépedet. Ha ez a képernyő<br>újra megjelenik, próbáld meg megjavítani.</p>
-    <p style="animation:blink2 1s step-end infinite;">Nyomj bármilyen gombot a folytatáshoz...</p>
-    <p style="position:absolute;bottom:40px;right:40px;font-size:11px;color:#6666cc;">...de semmi sem fog történni 😂</p>
+    <div style="font-size:11px;color:#ff6a00;" id="controller-ammo-txt">10 töltény</div>
   </div>
 </div>
 
-<!-- TASKBAR -->
-<div id="taskbar">
-  <div id="start-btn" onclick="toggleStart()"><span>🪟</span> <strong>Start</strong></div>
-  <div style="width:1px;background:#808080;height:20px;margin:0 2px;"></div>
-  <div id="taskbar-buttons" style="display:flex;gap:2px;flex:1;overflow:hidden;"></div>
-  <div id="clock">00:00</div>
-</div>
+<!-- GAME -->
+<div id="game-wrap">
+  <canvas id="gameCanvas"></canvas>
+  <div id="flash"></div>
 
-<!-- START MENU -->
-<div id="start-menu">
-  <div class="start-sidebar"><span>Windows 98</span></div>
-  <div class="start-items">
-    <div class="start-item" onclick="openWindow('about');closeStart()">🖥️ &nbsp;Rólam</div>
-    <div class="start-item" onclick="openWindow('projects');closeStart()">📁 &nbsp;Projektek</div>
-    <div class="start-item" onclick="openWindow('music');closeStart()">🎵 &nbsp;Winamp</div>
-    <div class="start-item" onclick="openWindow('guestbook');closeStart()">📝 &nbsp;Vendégkönyv</div>
-    <div class="start-separator"></div>
-    <div class="start-item" onclick="showBsod();closeStart()">⚙️ &nbsp;Rendszer</div>
-    <div class="start-separator"></div>
-    <div class="start-item" onclick="alert('Ez csak egy oldal 😄');closeStart()">🔌 &nbsp;Leállítás...</div>
+  <!-- START SCREEN -->
+  <div class="overlay" id="start-screen">
+    <div class="overlay-title">3D <span class="accent">NYOMTATÓ</span><br>TÚLÉLŐS JÁTÉK</div>
+    <div class="overlay-sub">
+      Egy játékos a nyomtatóban próbál túlélni.<br>
+      A másik irányítja a fúvókát és filamentet lő.<br>
+      2 perc — túlélj, vagy elpusztíts mindenkit!
+    </div>
+    <div class="controls-grid">
+      <div class="control-box">
+        <h3>🟢 Túlélő (WASD)</h3>
+        <p>
+          <span class="key">W</span> <span class="key">A</span> <span class="key">S</span> <span class="key">D</span> — mozgás<br>
+          Kerüld a filamenteket!<br>
+          Éld túl a 2 percet!<br>
+          HP: 100 — 1 találat = 20 HP
+        </p>
+      </div>
+      <div class="control-box">
+        <h3>🔴 Controller (Nyilak)</h3>
+        <p>
+          <span class="key">↑</span> <span class="key">↓</span> <span class="key">←</span> <span class="key">→</span> — fúvóka<br>
+          <span class="key">Space</span> — filament lövés<br>
+          Öld meg a túlélőt!<br>
+          10 töltény / kör
+        </p>
+      </div>
+    </div>
+    <button class="big-btn" onclick="startGame()">JÁTÉK INDÍTÁSA</button>
+  </div>
+
+  <!-- ROUND END -->
+  <div class="overlay" id="round-end" style="display:none;">
+    <div class="overlay-title" id="round-title">KÖR VÉGE</div>
+    <div class="winner-text" id="winner-text">Túlélő nyert!</div>
+    <div class="score-board">
+      <div class="score-item">
+        <div class="score-num s" id="score-s">0</div>
+        <div class="score-lbl">TÚLÉLŐ</div>
+      </div>
+      <div class="score-item" style="color:#555;font-size:24px;padding-top:8px;">—</div>
+      <div class="score-item">
+        <div class="score-num c" id="score-c">0</div>
+        <div class="score-lbl">CONTROLLER</div>
+      </div>
+    </div>
+    <div class="overlay-sub" id="round-sub">Következő körben szerepek felcserélődnek!</div>
+    <button class="big-btn" onclick="nextRound()">KÖVETKEZŐ KÖR →</button>
+  </div>
+
+  <!-- GAME OVER -->
+  <div class="overlay" id="game-over" style="display:none;">
+    <div class="overlay-title">JÁTÉK <span class="accent">VÉGE</span></div>
+    <div class="winner-text" id="final-winner" style="font-size:24px;"></div>
+    <div class="score-board">
+      <div class="score-item">
+        <div class="score-num s" id="final-score-s">0</div>
+        <div class="score-lbl">TÚLÉLŐ</div>
+      </div>
+      <div class="score-item" style="color:#555;font-size:24px;padding-top:8px;">—</div>
+      <div class="score-item">
+        <div class="score-num c" id="final-score-c">0</div>
+        <div class="score-lbl">CONTROLLER</div>
+      </div>
+    </div>
+    <button class="big-btn" onclick="resetGame()">ÚJ JÁTÉK</button>
   </div>
 </div>
 
 <script>
-// CLOCK
-function updateClock(){
-  const n=new Date(),h=String(n.getHours()).padStart(2,'0'),m=String(n.getMinutes()).padStart(2,'0');
-  document.getElementById('clock').textContent=h+':'+m;
-}
-updateClock();setInterval(updateClock,10000);
+// ==================== CANVAS SETUP ====================
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const wrap = document.getElementById('game-wrap');
 
-// WINDOWS
-const wins={
-  about:{id:'win-about',title:'🖥️ Rólam.txt'},
-  projects:{id:'win-projects',title:'📁 Projektek'},
-  music:{id:'win-music',title:'🎵 Winamp'},
-  guestbook:{id:'win-guestbook',title:'📝 Vendégkönyv'},
-  error:{id:'win-error',title:'❌ Hiba'},
-};
-let topZ=20;
-const minimized={};
-const taskBtns={};
+function resizeCanvas(){
+  canvas.width = wrap.clientWidth;
+  canvas.height = wrap.clientHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', ()=>{ resizeCanvas(); });
 
-function openWindow(k){
-  const el=document.getElementById(wins[k].id);
-  el.style.display='flex';el.style.zIndex=++topZ;
-  minimized[k]=false;
-  if(!taskBtns[k]){
-    const b=document.createElement('div');
-    b.className='task-btn active-task';
-    b.textContent=wins[k].title;
-    b.onclick=()=>{ if(minimized[k])openWindow(k); else minimizeWindow(k); };
-    taskBtns[k]=b;
-    document.getElementById('taskbar-buttons').appendChild(b);
-  } else { taskBtns[k].classList.add('active-task'); }
-}
-function closeWindow(k){
-  document.getElementById(wins[k].id).style.display='none';
-  if(taskBtns[k]){taskBtns[k].remove();delete taskBtns[k];}
-}
-function minimizeWindow(k){
-  document.getElementById(wins[k].id).style.display='none';
-  minimized[k]=true;
-  if(taskBtns[k])taskBtns[k].classList.remove('active-task');
-}
+// ==================== GAME STATE ====================
+const ROUND_TIME = 120; // seconds
+const MAX_AMMO = 10;
+const SURVIVOR_SPEED = 3.5;
+const NOZZLE_SPEED = 4;
+const FILAMENT_SPEED = 7;
+const FILAMENT_DAMAGE = 20;
+const SURVIVOR_HP = 100;
+const ROUNDS_TO_WIN = 3;
 
-// DRAG
-let dragging=null,dox=0,doy=0;
-function startDrag(e,id){
-  dragging=document.getElementById(id);
-  dragging.style.zIndex=++topZ;
-  dox=e.clientX-dragging.offsetLeft;
-  doy=e.clientY-dragging.offsetTop;
-  e.preventDefault();
-}
-document.addEventListener('mousemove',e=>{
-  if(!dragging)return;
-  let nx=Math.max(0,Math.min(e.clientX-dox,window.innerWidth-dragging.offsetWidth));
-  let ny=Math.max(20,Math.min(e.clientY-doy,window.innerHeight-28-dragging.offsetHeight));
-  dragging.style.left=nx+'px';dragging.style.top=ny+'px';
+let gameState = 'menu'; // menu, playing, roundend, gameover
+let roundTimer = ROUND_TIME;
+let timerInterval = null;
+let scores = { survivor: 0, controller: 0 };
+let totalRounds = 0;
+
+// Player objects
+let survivor = {};
+let nozzle = {};
+let filaments = [];
+let particles = [];
+let ammo = MAX_AMMO;
+let shootCooldown = 0;
+let nozzleLine = { x: 0, y: 0, active: false, timer: 0 };
+
+// Keys
+const keys = {};
+document.addEventListener('keydown', e => {
+  keys[e.code] = true;
+  // prevent arrow keys scrolling
+  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code)) e.preventDefault();
 });
-document.addEventListener('mouseup',()=>dragging=null);
+document.addEventListener('keyup', e => { keys[e.code] = false; });
 
-// ICONS
-function selectIcon(el,e){e.stopPropagation();deselectAll();el.classList.add('selected');}
-function deselectAll(){document.querySelectorAll('.desktop-icon').forEach(i=>i.classList.remove('selected'));}
+// ==================== INIT ====================
+function initRound(){
+  const W = canvas.width, H = canvas.height;
+  survivor = {
+    x: W * 0.25, y: H * 0.5,
+    w: 22, h: 28,
+    hp: SURVIVOR_HP,
+    vx: 0, vy: 0,
+    invincible: 0,
+    trail: []
+  };
+  nozzle = {
+    x: W * 0.75, y: H * 0.3,
+    w: 30, h: 20,
+    armed: true
+  };
+  filaments = [];
+  particles = [];
+  ammo = MAX_AMMO;
+  shootCooldown = 0;
+  roundTimer = ROUND_TIME;
+  nozzleLine = { active: false, timer: 0 };
+  updateHUD();
+}
 
-// START
-function toggleStart(){
-  const m=document.getElementById('start-menu'),b=document.getElementById('start-btn');
-  m.style.display=m.style.display==='block'?'none':'block';
-  b.classList.toggle('pressed');
-}
-function closeStart(){
-  document.getElementById('start-menu').style.display='none';
-  document.getElementById('start-btn').classList.remove('pressed');
-}
-document.addEventListener('click',e=>{
-  if(!e.target.closest('#start-menu')&&!e.target.closest('#start-btn'))closeStart();
-});
+// ==================== GAME LOOP ====================
+let lastTime = 0;
+let animId = null;
 
-// BSOD
-function showBsod(){
-  document.getElementById('bsod').style.display='block';
-  document.addEventListener('keydown',hideBsod,{once:true});
-  setTimeout(hideBsod,6000);
+function gameLoop(ts){
+  const dt = Math.min((ts - lastTime) / 16.67, 3);
+  lastTime = ts;
+  if(gameState === 'playing'){
+    update(dt);
+    render();
+  }
+  animId = requestAnimationFrame(gameLoop);
 }
-function hideBsod(){document.getElementById('bsod').style.display='none';}
 
-// MUSIC
-const tracks=['Darude - Sandstorm','Eiffel 65 - Blue','Aqua - Barbie Girl','Vengaboys - Boom','Scatman John - Scatman','Bomfunk MCs - Freestyler','ATB - 9 PM (Till I Come)','Daft Punk - One More Time'];
-let cur=0,playing=true,pct=35;
-function renderPL(){
-  document.getElementById('playlist').innerHTML=tracks.map((t,i)=>`<div onclick="playTrack(${i})" style="padding:2px 4px;cursor:pointer;color:${i===cur?'#00ff00':'#666'};background:${i===cur?'#002200':'transparent'};font-size:12px;">${i===cur?'► ':' '}${i+1}. ${t}</div>`).join('');
-}
-function playTrack(i){cur=i;document.getElementById('now-playing').textContent='► '+tracks[i];renderPL();}
-function nextTrack(){playTrack((cur+1)%tracks.length);}
-function prevTrack(){playTrack((cur-1+tracks.length)%tracks.length);}
-function togglePlay(){playing=!playing;document.getElementById('play-btn').textContent=playing?'⏸':'▶';}
-function stopMusic(){playing=false;pct=0;document.getElementById('prog-bar').style.width='0%';document.getElementById('play-btn').textContent='▶';}
-renderPL();
-setInterval(()=>{if(playing){pct=Math.min(100,(pct||0)+0.25);document.getElementById('prog-bar').style.width=pct+'%';if(pct>=100){pct=0;nextTrack();}}},200);
+function update(dt){
+  const W = canvas.width, H = canvas.height;
+  if(shootCooldown > 0) shootCooldown -= dt;
 
-// GUESTBOOK
-const entries=[
-  {name:'Péter',msg:'Nagyon király az oldal!! 🔥🔥'},
-  {name:'Anna',msg:'Imádom a win98 stílust 😍'},
-  {name:'ZoltánGamer99',msg:'Ez retro king! Csak úgy tovább!!! 👑'},
-];
-function renderGB(){
-  document.getElementById('gb-entries').innerHTML=entries.map(e=>`<div class="inset" style="margin-bottom:6px;"><div style="font-weight:bold;color:#000080;">👤 ${e.name}</div><div style="margin-top:4px;">${e.msg}</div></div>`).join('');
-}
-function addGuestEntry(){
-  const name=document.getElementById('gb-name').value.trim()||'Névtelen';
-  const msg=document.getElementById('gb-msg').value.trim();
-  if(!msg){alert('Írj valamit!');return;}
-  entries.unshift({name,msg});
-  document.getElementById('gb-name').value='';
-  document.getElementById('gb-msg').value='';
-  renderGB();
-}
-renderGB();
+  // ---- SURVIVOR MOVEMENT ----
+  let sx = 0, sy = 0;
+  if(keys['KeyW'] || keys['Keyw']) sy = -1;
+  if(keys['KeyS'] || keys['Keys']) sy = 1;
+  if(keys['KeyA'] || keys['Keya']) sx = -1;
+  if(keys['KeyD'] || keys['Keyd']) sx = 1;
+  if(sx !== 0 && sy !== 0){ sx *= 0.707; sy *= 0.707; }
+  survivor.vx = sx * SURVIVOR_SPEED * dt;
+  survivor.vy = sy * SURVIVOR_SPEED * dt;
+  survivor.x = Math.max(survivor.w/2, Math.min(W - survivor.w/2, survivor.x + survivor.vx));
+  survivor.y = Math.max(survivor.h/2, Math.min(H - survivor.h/2, survivor.y + survivor.vy));
 
-// AUTO OPEN
-setTimeout(()=>{openWindow('about');setTimeout(()=>openWindow('error'),700);},300);
+  // Survivor trail
+  survivor.trail.unshift({x: survivor.x, y: survivor.y});
+  if(survivor.trail.length > 12) survivor.trail.pop();
+
+  if(survivor.invincible > 0) survivor.invincible -= dt;
+
+  // ---- NOZZLE MOVEMENT ----
+  let nx = 0, ny = 0;
+  if(keys['ArrowUp']) ny = -1;
+  if(keys['ArrowDown']) ny = 1;
+  if(keys['ArrowLeft']) nx = -1;
+  if(keys['ArrowRight']) nx = 1;
+  if(nx !== 0 && ny !== 0){ nx *= 0.707; ny *= 0.707; }
+  nozzle.x = Math.max(nozzle.w/2 + 10, Math.min(W - nozzle.w/2 - 10, nozzle.x + nx * NOZZLE_SPEED * dt));
+  nozzle.y = Math.max(nozzle.h/2 + 10, Math.min(H * 0.6, nozzle.y + ny * NOZZLE_SPEED * dt));
+
+  // ---- SHOOT ----
+  if(keys['Space'] && ammo > 0 && shootCooldown <= 0){
+    shootFilament();
+    shootCooldown = 18;
+  }
+
+  // ---- FILAMENTS ----
+  filaments = filaments.filter(f => {
+    f.x += f.vx * dt;
+    f.y += f.vy * dt;
+    f.trail.unshift({x: f.x, y: f.y});
+    if(f.trail.length > 8) f.trail.pop();
+
+    // Wall bounce
+    if(f.x < 4 || f.x > W - 4){ f.vx *= -1; f.bounces--; }
+    if(f.y < 4 || f.y > H - 4){ f.vy *= -1; f.bounces--; }
+
+    // Hit survivor
+    if(survivor.invincible <= 0){
+      const dx = f.x - survivor.x;
+      const dy = f.y - survivor.y;
+      if(Math.abs(dx) < survivor.w/2 + f.r && Math.abs(dy) < survivor.h/2 + f.r){
+        hitSurvivor(f);
+        spawnParticles(f.x, f.y, '#ff6a00', 12);
+        return false;
+      }
+    }
+    return f.bounces > 0 && f.x > -20 && f.x < W+20 && f.y > -20 && f.y < H+20;
+  });
+
+  // ---- PARTICLES ----
+  particles = particles.filter(p => {
+    p.x += p.vx * dt;
+    p.y += p.vy * dt;
+    p.vy += 0.15 * dt;
+    p.life -= dt;
+    p.alpha = Math.max(0, p.life / p.maxLife);
+    return p.life > 0;
+  });
+
+  // Nozzle laser line update
+  if(nozzleLine.active){
+    nozzleLine.timer -= dt;
+    if(nozzleLine.timer <= 0) nozzleLine.active = false;
+  }
+
+  updateHUD();
+}
+
+function shootFilament(){
+  ammo--;
+  // Aim at survivor with slight inaccuracy
+  const W = canvas.width;
+  const angle = Math.atan2(survivor.y - nozzle.y, survivor.x - nozzle.x);
+  const spread = (Math.random() - 0.5) * 0.35;
+  const finalAngle = angle + spread;
+  filaments.push({
+    x: nozzle.x,
+    y: nozzle.y + 15,
+    vx: Math.cos(finalAngle) * FILAMENT_SPEED,
+    vy: Math.sin(finalAngle) * FILAMENT_SPEED,
+    r: 5,
+    bounces: 3,
+    trail: [],
+    color: `hsl(${20 + Math.random()*40},100%,55%)`
+  });
+  // Show nozzle line
+  nozzleLine = {
+    active: true,
+    timer: 6,
+    x1: nozzle.x, y1: nozzle.y + 15,
+    x2: nozzle.x + Math.cos(finalAngle)*60,
+    y2: nozzle.y + 15 + Math.sin(finalAngle)*60
+  };
+  spawnParticles(nozzle.x, nozzle.y+15, '#ff9800', 5);
+  updateAmmoHUD();
+}
+
+function hitSurvivor(f){
+  survivor.hp = Math.max(0, survivor.hp - FILAMENT_DAMAGE);
+  survivor.invincible = 30;
+  flashScreen();
+  if(survivor.hp <= 0){
+    endRound('controller');
+  }
+}
+
+function flashScreen(){
+  const fl = document.getElementById('flash');
+  fl.style.opacity = '1';
+  setTimeout(()=> fl.style.opacity = '0', 100);
+}
+
+function spawnParticles(x, y, color, count){
+  for(let i=0;i<count;i++){
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 1 + Math.random() * 4;
+    particles.push({
+      x, y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - 2,
+      life: 20 + Math.random() * 20,
+      maxLife: 40,
+      alpha: 1,
+      color,
+      r: 2 + Math.random() * 3
+    });
+  }
+}
+
+// ==================== RENDER ====================
+function render(){
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  // Background
+  ctx.fillStyle = '#0a0a0f';
+  ctx.fillRect(0, 0, W, H);
+
+  // Grid
+  drawGrid(W, H);
+
+  // Printer room walls
+  drawRoom(W, H);
+
+  // Filament trails
+  filaments.forEach(f => {
+    if(f.trail.length > 1){
+      for(let i=0;i<f.trail.length-1;i++){
+        const alpha = (1 - i/f.trail.length) * 0.5;
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(255,120,0,${alpha})`;
+        ctx.lineWidth = (f.r * 2) * (1 - i/f.trail.length);
+        ctx.moveTo(f.trail[i].x, f.trail[i].y);
+        ctx.lineTo(f.trail[i+1].x, f.trail[i+1].y);
+        ctx.stroke();
+      }
+    }
+  });
+
+  // Filaments
+  filaments.forEach(f => {
+    ctx.save();
+    ctx.shadowBlur = 15;
+    ctx.shadowColor = f.color;
+    ctx.beginPath();
+    ctx.arc(f.x, f.y, f.r, 0, Math.PI*2);
+    ctx.fillStyle = f.color;
+    ctx.fill();
+    // inner bright
+    ctx.beginPath();
+    ctx.arc(f.x, f.y, f.r*0.5, 0, Math.PI*2);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+    ctx.restore();
+  });
+
+  // Nozzle laser hint
+  if(nozzleLine.active){
+    const alpha = nozzleLine.timer / 6;
+    ctx.save();
+    ctx.strokeStyle = `rgba(255,150,0,${alpha})`;
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4,4]);
+    ctx.beginPath();
+    ctx.moveTo(nozzleLine.x1, nozzleLine.y1);
+    ctx.lineTo(nozzleLine.x2, nozzleLine.y2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+  }
+
+  // Particles
+  particles.forEach(p => {
+    ctx.save();
+    ctx.globalAlpha = p.alpha;
+    ctx.shadowBlur = 8;
+    ctx.shadowColor = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    ctx.fillStyle = p.color;
+    ctx.fill();
+    ctx.restore();
+  });
+
+  // Survivor trail
+  for(let i=1;i<survivor.trail.length;i++){
+    const alpha = (1 - i/survivor.trail.length) * 0.3;
+    ctx.beginPath();
+    ctx.arc(survivor.trail[i].x, survivor.trail[i].y, 8 * (1-i/survivor.trail.length), 0, Math.PI*2);
+    ctx.fillStyle = `rgba(100,255,150,${alpha})`;
+    ctx.fill();
+  }
+
+  // Survivor
+  drawSurvivor(survivor.x, survivor.y, survivor.invincible > 0);
+
+  // Nozzle
+  drawNozzle(nozzle.x, nozzle.y);
+
+  // Nozzle aim line to survivor
+  ctx.save();
+  ctx.setLineDash([6, 8]);
+  const aimAlpha = ammo > 0 ? 0.15 : 0.05;
+  ctx.strokeStyle = `rgba(255,80,0,${aimAlpha})`;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(nozzle.x, nozzle.y + 15);
+  ctx.lineTo(survivor.x, survivor.y);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+}
+
+function drawGrid(W, H){
+  ctx.save();
+  ctx.strokeStyle = 'rgba(255,106,0,0.04)';
+  ctx.lineWidth = 1;
+  const gridSize = 40;
+  for(let x=0;x<W;x+=gridSize){ ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke(); }
+  for(let y=0;y<H;y+=gridSize){ ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke(); }
+  ctx.restore();
+}
+
+function drawRoom(W, H){
+  ctx.save();
+  // Floor pattern
+  ctx.strokeStyle = 'rgba(255,106,0,0.08)';
+  ctx.lineWidth = 1;
+  for(let x=0;x<W;x+=80){
+    for(let y=0;y<H;y+=80){
+      ctx.strokeRect(x+2, y+2, 76, 76);
+    }
+  }
+  // Corner decorations
+  const corners = [[0,0],[W,0],[0,H],[W,H]];
+  corners.forEach(([cx,cy])=>{
+    ctx.strokeStyle = 'rgba(255,106,0,0.3)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    const dx = cx===0?1:-1, dy = cy===0?1:-1;
+    ctx.moveTo(cx, cy + dy*40);
+    ctx.lineTo(cx, cy);
+    ctx.lineTo(cx + dx*40, cy);
+    ctx.stroke();
+  });
+  // Walls glow
+  const gradient = ctx.createLinearGradient(0,0,0,H);
+  gradient.addColorStop(0,'rgba(255,106,0,0.05)');
+  gradient.addColorStop(1,'rgba(255,106,0,0)');
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0,0,W,20);
+
+  // Divider line (printer area)
+  ctx.strokeStyle = 'rgba(255,106,0,0.15)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([10,10]);
+  ctx.beginPath();
+  ctx.moveTo(0, H * 0.65);
+  ctx.lineTo(W, H * 0.65);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = 'rgba(255,106,0,0.06)';
+  ctx.fillRect(0, 0, W, H*0.65);
+
+  ctx.restore();
+}
+
+function drawSurvivor(x, y, invincible){
+  ctx.save();
+  if(invincible){
+    ctx.globalAlpha = 0.5 + 0.5*Math.sin(Date.now()*0.03);
+  }
+  // Shadow
+  ctx.shadowBlur = 20;
+  ctx.shadowColor = '#00e676';
+
+  // Body
+  const hp_ratio = survivor.hp / SURVIVOR_HP;
+  const bodyColor = invincible
+    ? `hsl(${Date.now()*0.5 % 360},100%,60%)`
+    : `hsl(${130 * hp_ratio},100%,50%)`;
+
+  ctx.fillStyle = bodyColor;
+  // Blocky roblox-style character
+  // Head
+  ctx.fillRect(x - 9, y - 24, 18, 16);
+  // Visor
+  ctx.fillStyle = invincible ? '#fff' : '#001a00';
+  ctx.fillRect(x - 6, y - 21, 12, 7);
+  // Eyes
+  ctx.fillStyle = '#00ff88';
+  ctx.fillRect(x - 5, y - 20, 3, 3);
+  ctx.fillRect(x + 2, y - 20, 3, 3);
+  // Torso
+  ctx.fillStyle = bodyColor;
+  ctx.fillRect(x - 10, y - 8, 20, 18);
+  // Arms
+  ctx.fillRect(x - 16, y - 8, 6, 14);
+  ctx.fillRect(x + 10, y - 8, 6, 14);
+  // Legs
+  ctx.fillRect(x - 9, y + 10, 8, 14);
+  ctx.fillRect(x + 1, y + 10, 8, 14);
+
+  // HP indicator above head
+  const barW = 30;
+  ctx.fillStyle = '#111';
+  ctx.fillRect(x - barW/2, y - 32, barW, 4);
+  ctx.fillStyle = bodyColor;
+  ctx.fillRect(x - barW/2, y - 32, barW * hp_ratio, 4);
+
+  ctx.restore();
+}
+
+function drawNozzle(x, y){
+  ctx.save();
+  ctx.shadowBlur = 25;
+  ctx.shadowColor = '#ff6a00';
+
+  // Machine body
+  ctx.fillStyle = '#1a1a1a';
+  ctx.fillRect(x - 28, y - 30, 56, 40);
+  // Metal outline
+  ctx.strokeStyle = '#ff6a00';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(x - 28, y - 30, 56, 40);
+
+  // Nozzle tip
+  ctx.fillStyle = '#ff6a00';
+  ctx.beginPath();
+  ctx.moveTo(x - 8, y + 10);
+  ctx.lineTo(x + 8, y + 10);
+  ctx.lineTo(x + 5, y + 22);
+  ctx.lineTo(x - 5, y + 22);
+  ctx.closePath();
+  ctx.fill();
+
+  // Nozzle glow tip
+  ctx.shadowBlur = 20;
+  ctx.shadowColor = ammo > 0 ? '#ff6a00' : '#333';
+  ctx.beginPath();
+  ctx.arc(x, y + 22, 5, 0, Math.PI*2);
+  ctx.fillStyle = ammo > 0 ? '#ffcc00' : '#333';
+  ctx.fill();
+
+  // Screen on machine
+  ctx.fillStyle = '#001a00';
+  ctx.fillRect(x - 18, y - 24, 36, 20);
+  ctx.fillStyle = '#00ff88';
+  ctx.font = 'bold 9px Share Tech Mono';
+  ctx.textAlign = 'center';
+  ctx.fillText(`${ammo}/${MAX_AMMO}`, x, y - 10);
+  ctx.fillText('TÖLTÉNY', x, y - 2);
+
+  // Warning lights
+  const warnColor = ammo > 3 ? '#00ff00' : ammo > 0 ? '#ffcc00' : '#ff0000';
+  ctx.shadowColor = warnColor;
+  ctx.beginPath();
+  ctx.arc(x - 22, y - 24, 4, 0, Math.PI*2);
+  ctx.fillStyle = warnColor;
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(x + 22, y - 24, 4, 0, Math.PI*2);
+  ctx.fillStyle = warnColor;
+  ctx.fill();
+
+  // Label
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = '#ff6a00';
+  ctx.font = '8px Share Tech Mono';
+  ctx.textAlign = 'center';
+  ctx.fillText('CONTROLLER', x, y - 34);
+
+  ctx.restore();
+}
+
+// ==================== HUD ====================
+function updateHUD(){
+  const hp = Math.max(0, survivor.hp);
+  document.getElementById('survivor-hp').style.width = (hp / SURVIVOR_HP * 100) + '%';
+  document.getElementById('survivor-hp-txt').textContent = hp + ' HP';
+  updateAmmoHUD();
+  document.getElementById('score-hud').textContent = `S: ${scores.survivor} — C: ${scores.controller}`;
+}
+
+function updateAmmoHUD(){
+  const pct = ammo / MAX_AMMO * 100;
+  document.getElementById('controller-ammo').style.width = pct + '%';
+  document.getElementById('controller-ammo-txt').textContent = ammo + ' töltény';
+}
+
+// ==================== TIMER ====================
+function startTimer(){
+  timerInterval = setInterval(()=>{
+    roundTimer--;
+    const m = Math.floor(roundTimer / 60);
+    const s = roundTimer % 60;
+    document.getElementById('timer').textContent = `${m}:${s.toString().padStart(2,'0')}`;
+    if(roundTimer <= 10){
+      document.getElementById('timer').style.color = '#ff0044';
+      document.getElementById('timer').style.textShadow = '0 0 20px #ff0044';
+    }
+    if(roundTimer <= 0){
+      endRound('survivor');
+    }
+  }, 1000);
+}
+
+function stopTimer(){
+  clearInterval(timerInterval);
+}
+
+// ==================== ROUND LOGIC ====================
+function startGame(){
+  document.getElementById('start-screen').style.display = 'none';
+  gameState = 'playing';
+  scores = {survivor:0, controller:0};
+  totalRounds = 0;
+  initRound();
+  startTimer();
+  if(!animId) requestAnimationFrame(ts=>{ lastTime=ts; gameLoop(ts); });
+}
+
+function endRound(winner){
+  stopTimer();
+  gameState = 'roundend';
+  totalRounds++;
+
+  if(winner === 'survivor'){
+    scores.survivor++;
+    document.getElementById('round-title').textContent = '✅ KÖR VÉGE';
+    const wt = document.getElementById('winner-text');
+    wt.className = 'winner-text';
+    wt.textContent = '🟢 Túlélő nyerte a kört! Életben maradt!';
+  } else {
+    scores.controller++;
+    document.getElementById('round-title').textContent = '💥 KÖR VÉGE';
+    const wt = document.getElementById('winner-text');
+    wt.className = 'winner-text controller-win';
+    wt.textContent = '🔴 Controller nyerte a kört! A túlélőt megölte!';
+  }
+
+  document.getElementById('score-s').textContent = scores.survivor;
+  document.getElementById('score-c').textContent = scores.controller;
+
+  const roundsLeft = ROUNDS_TO_WIN - Math.max(scores.survivor, scores.controller);
+  if(scores.survivor >= ROUNDS_TO_WIN || scores.controller >= ROUNDS_TO_WIN){
+    // Game over after delay
+    setTimeout(()=>{
+      showGameOver();
+    }, 400);
+    document.getElementById('round-sub').textContent = 'Játék vége következik...';
+  } else {
+    document.getElementById('round-sub').textContent = `Következő körben szerepek felcserélődnek! (${ROUNDS_TO_WIN} nyerésig megy)`;
+  }
+
+  document.getElementById('round-end').style.display = 'flex';
+}
+
+function showGameOver(){
+  document.getElementById('round-end').style.display = 'none';
+  document.getElementById('game-over').style.display = 'flex';
+  const fw = document.getElementById('final-winner');
+  if(scores.survivor > scores.controller){
+    fw.className = 'winner-text';
+    fw.textContent = '🟢 TÚLÉLŐ NYERTE A JÁTÉKOT!';
+  } else {
+    fw.className = 'winner-text controller-win';
+    fw.textContent = '🔴 CONTROLLER NYERTE A JÁTÉKOT!';
+  }
+  document.getElementById('final-score-s').textContent = scores.survivor;
+  document.getElementById('final-score-c').textContent = scores.controller;
+}
+
+function nextRound(){
+  if(scores.survivor >= ROUNDS_TO_WIN || scores.controller >= ROUNDS_TO_WIN){
+    showGameOver();
+    return;
+  }
+  document.getElementById('round-end').style.display = 'none';
+  // Swap roles visually (just re-init, same keyboard same screen)
+  gameState = 'playing';
+  document.getElementById('timer').style.color = '#ff6a00';
+  document.getElementById('timer').style.textShadow = '0 0 20px #ff6a00';
+  initRound();
+  startTimer();
+}
+
+function resetGame(){
+  document.getElementById('game-over').style.display = 'none';
+  scores = {survivor:0, controller:0};
+  totalRounds = 0;
+  gameState = 'playing';
+  document.getElementById('timer').style.color = '#ff6a00';
+  document.getElementById('timer').style.textShadow = '0 0 20px #ff6a00';
+  initRound();
+  startTimer();
+}
+
+// Start render loop immediately (for bg)
+requestAnimationFrame(ts=>{ lastTime=ts; animId=requestAnimationFrame(gameLoop); });
 </script>
 </body>
 </html>
