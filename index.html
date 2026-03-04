@@ -3,1139 +3,897 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Kris3DLab — Profil & DevLog</title>
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<title>Kris3DLab — Links & Magyar Roblox</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
 <style>
+/* =========================================================
+   ROOT & RESET
+   ========================================================= */
 :root{
-  --bg:#050810;
-  --surface:#0c1020;
-  --border:#1a2540;
-  --green:#00ff88;
-  --green2:#00cc66;
-  --green-dim:#003322;
-  --cyan:#00e5ff;
+  --g1:#00ff88;
+  --g2:#00e5ff;
   --pink:#ff2d78;
   --yellow:#ffe600;
-  --text:#d0e0ff;
-  --muted:#4a5a7a;
+  --purple:#bf5fff;
+  --bg-dark:#050810;
+  --glass-bg:rgba(255,255,255,0.04);
+  --glass-border:rgba(255,255,255,0.10);
+  --glass-hover:rgba(255,255,255,0.08);
+  --text:#e8f0ff;
+  --muted:#5a6a8a;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 body{
-  background:var(--bg);
-  color:var(--text);
   font-family:'Rajdhani',sans-serif;
-  font-size:16px;
+  background:var(--bg-dark);
+  color:var(--text);
   min-height:100vh;
   overflow-x:hidden;
 }
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:#050810;}
+::-webkit-scrollbar-thumb{background:#00ff8830;border-radius:3px;}
 
-/* SCROLLBAR */
-::-webkit-scrollbar{width:6px;}
-::-webkit-scrollbar-track{background:#0c1020;}
-::-webkit-scrollbar-thumb{background:#00ff8840;border-radius:3px;}
-
-/* BG GRID */
+/* =========================================================
+   ANIMATED BG — shared
+   ========================================================= */
+.bg-canvas{
+  position:fixed;inset:0;
+  z-index:0;
+  pointer-events:none;
+}
+/* Orbs */
+.orb{
+  position:fixed;
+  border-radius:50%;
+  filter:blur(80px);
+  opacity:.18;
+  pointer-events:none;
+  animation:orbFloat 12s ease-in-out infinite alternate;
+}
+.orb1{width:500px;height:500px;background:radial-gradient(circle,#00ff88,transparent);top:-150px;left:-100px;animation-delay:0s;}
+.orb2{width:400px;height:400px;background:radial-gradient(circle,#00e5ff,transparent);bottom:-100px;right:-80px;animation-delay:-5s;}
+.orb3{width:300px;height:300px;background:radial-gradient(circle,#bf5fff,transparent);top:40%;left:50%;animation-delay:-9s;}
+@keyframes orbFloat{
+  0%{transform:translate(0,0) scale(1);}
+  100%{transform:translate(30px,40px) scale(1.08);}
+}
+/* Grid */
 body::before{
   content:'';
-  position:fixed;inset:0;
+  position:fixed;inset:0;z-index:0;
   background-image:
-    linear-gradient(rgba(0,255,136,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,255,136,0.025) 1px, transparent 1px);
-  background-size:50px 50px;
+    linear-gradient(rgba(0,255,136,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,255,136,0.03) 1px,transparent 1px);
+  background-size:44px 44px;
   pointer-events:none;
-  z-index:0;
 }
 
-/* NAV */
+/* =========================================================
+   NAV
+   ========================================================= */
 nav{
-  position:sticky;top:0;
-  background:rgba(5,8,16,0.92);
-  backdrop-filter:blur(16px);
-  border-bottom:1px solid var(--border);
-  z-index:100;
+  position:sticky;top:0;z-index:50;
+  background:rgba(5,8,16,0.75);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,255,255,0.07);
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:0 2rem;
-  height:60px;
+  padding:0 1.5rem;
+  height:56px;
 }
 .nav-logo{
   font-family:'Orbitron',sans-serif;
+  font-size:1.05rem;
   font-weight:900;
-  font-size:1.2rem;
-  color:var(--green);
-  text-shadow:0 0 20px var(--green);
+  color:var(--g1);
+  text-shadow:0 0 18px rgba(0,255,136,.5);
   letter-spacing:2px;
 }
-.nav-logo span{color:var(--text);text-shadow:none;}
-.nav-tabs{display:flex;gap:4px;}
-.nav-tab{
-  padding:6px 20px;
+.nav-logo em{color:var(--text);font-style:normal;text-shadow:none;}
+.nav-pills{display:flex;gap:4px;}
+.pill{
+  padding:5px 18px;
   background:transparent;
   border:1px solid transparent;
   color:var(--muted);
   font-family:'Rajdhani',sans-serif;
-  font-size:14px;
-  font-weight:600;
-  letter-spacing:1px;
-  text-transform:uppercase;
+  font-size:13px;font-weight:600;
+  letter-spacing:1px;text-transform:uppercase;
   cursor:pointer;
-  transition:all 0.2s;
-  border-radius:2px;
+  border-radius:100px;
+  transition:all .2s;
 }
-.nav-tab:hover{color:var(--green);border-color:var(--green-dim);}
-.nav-tab.active{
-  color:var(--green);
-  border-color:var(--green);
-  background:var(--green-dim);
-  box-shadow:0 0 15px rgba(0,255,136,0.1);
+.pill:hover{color:var(--g1);border-color:rgba(0,255,136,.3);}
+.pill.active{
+  color:var(--g1);
+  border-color:var(--g1);
+  background:rgba(0,255,136,.08);
+  box-shadow:0 0 16px rgba(0,255,136,.15);
 }
 
-/* SECTIONS */
-.section{
-  position:relative;
-  z-index:1;
+/* =========================================================
+   SECTIONS
+   ========================================================= */
+.page{display:none;position:relative;z-index:1;}
+.page.active{display:block;}
+
+/* =========================================================
+   PAGE 1 — LINK TREE
+   ========================================================= */
+#page-links{
+  min-height:calc(100vh - 56px);
   display:none;
-  min-height:calc(100vh - 60px);
+  align-items:center;
+  justify-content:center;
+  padding:2.5rem 1.2rem 3rem;
 }
-.section.active{display:block;}
+#page-links.active{display:flex;flex-direction:column;}
 
-/* ============================================================
-   SECTION 1 — PROFIL KÁRTYA GENERÁTOR
-   ============================================================ */
-#sec-card{padding:3rem 2rem;}
-
-.section-header{
+.profile-head{
   text-align:center;
-  margin-bottom:3rem;
+  margin-bottom:2.2rem;
+  animation:fadeUp .7s .1s ease both;
 }
-.section-header h1{
-  font-family:'Orbitron',sans-serif;
-  font-size:clamp(1.6rem,4vw,2.8rem);
-  font-weight:900;
-  color:var(--green);
-  text-shadow:0 0 30px rgba(0,255,136,0.5);
-  letter-spacing:2px;
-  margin-bottom:.5rem;
-}
-.section-header p{color:var(--muted);font-size:15px;letter-spacing:.5px;}
-
-.card-builder{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:2rem;
-  max-width:1000px;
-  margin:0 auto;
-}
-
-/* FORM PANEL */
-.form-panel{
-  background:var(--surface);
-  border:1px solid var(--border);
-  padding:1.8rem;
+.avatar-ring{
   position:relative;
-  overflow:hidden;
+  display:inline-block;
+  margin-bottom:1rem;
 }
-.form-panel::before{
+.avatar-ring::before{
   content:'';
-  position:absolute;
-  top:0;left:0;right:0;
-  height:2px;
-  background:linear-gradient(90deg,transparent,var(--green),transparent);
-}
-.form-panel h2{
-  font-family:'Orbitron',sans-serif;
-  font-size:13px;
-  color:var(--green);
-  letter-spacing:3px;
-  margin-bottom:1.5rem;
-  text-transform:uppercase;
-}
-
-.form-group{margin-bottom:1.2rem;}
-.form-group label{
-  display:block;
-  font-size:11px;
-  letter-spacing:2px;
-  text-transform:uppercase;
-  color:var(--muted);
-  margin-bottom:.4rem;
-}
-.form-input{
-  width:100%;
-  background:#08101e;
-  border:1px solid var(--border);
-  color:var(--text);
-  font-family:'JetBrains Mono',monospace;
-  font-size:14px;
-  padding:.6rem .8rem;
-  outline:none;
-  transition:border-color .2s, box-shadow .2s;
-}
-.form-input:focus{
-  border-color:var(--green);
-  box-shadow:0 0 0 2px rgba(0,255,136,0.1);
-}
-.form-input option{background:#0c1020;}
-
-/* COLOR SWATCHES */
-.color-swatches{
-  display:flex;gap:8px;flex-wrap:wrap;
-}
-.swatch{
-  width:32px;height:32px;
-  border:2px solid transparent;
-  cursor:pointer;
-  transition:transform .15s, border-color .15s;
-  border-radius:2px;
-}
-.swatch:hover{transform:scale(1.15);}
-.swatch.selected{border-color:#fff;transform:scale(1.1);}
-
-/* BADGE PICKER */
-.badge-grid{
-  display:flex;gap:8px;flex-wrap:wrap;
-}
-.badge-opt{
-  padding:4px 12px;
-  background:#08101e;
-  border:1px solid var(--border);
-  color:var(--muted);
-  font-size:12px;
-  cursor:pointer;
-  transition:all .2s;
-  white-space:nowrap;
-}
-.badge-opt:hover{border-color:var(--green);color:var(--green);}
-.badge-opt.selected{
-  background:var(--green-dim);
-  border-color:var(--green);
-  color:var(--green);
-}
-
-/* GENERATE BTN */
-.gen-btn{
-  width:100%;
-  padding:14px;
-  background:transparent;
-  border:1px solid var(--green);
-  color:var(--green);
-  font-family:'Orbitron',sans-serif;
-  font-size:14px;
-  font-weight:700;
-  letter-spacing:3px;
-  cursor:pointer;
-  transition:all .2s;
-  margin-top:.5rem;
-  text-transform:uppercase;
-  position:relative;
-  overflow:hidden;
-}
-.gen-btn::before{
-  content:'';
-  position:absolute;
-  inset:0;
-  background:var(--green);
-  transform:translateX(-100%);
-  transition:transform .3s ease;
+  position:absolute;inset:-4px;
+  border-radius:50%;
+  background:conic-gradient(var(--g1),var(--g2),var(--purple),var(--pink),var(--g1));
+  animation:spin 4s linear infinite;
   z-index:0;
 }
-.gen-btn:hover::before{transform:translateX(0);}
-.gen-btn:hover{color:#000;}
-.gen-btn span{position:relative;z-index:1;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.avatar-inner{
+  position:relative;z-index:1;
+  width:96px;height:96px;
+  border-radius:50%;
+  background:rgba(0,255,136,.1);
+  border:3px solid var(--bg-dark);
+  display:flex;align-items:center;justify-content:center;
+  font-size:42px;
+  backdrop-filter:blur(8px);
+}
+.profile-name{
+  font-family:'Orbitron',sans-serif;
+  font-size:1.6rem;font-weight:900;
+  color:var(--g1);
+  text-shadow:0 0 24px rgba(0,255,136,.5);
+  letter-spacing:1px;
+  margin-bottom:.3rem;
+}
+.profile-bio{
+  font-size:14px;color:var(--muted);
+  letter-spacing:.5px;
+  max-width:280px;
+  margin:0 auto .8rem;
+  line-height:1.6;
+}
+.profile-badges{
+  display:flex;gap:8px;justify-content:center;flex-wrap:wrap;
+}
+.pbadge{
+  padding:3px 10px;
+  border-radius:100px;
+  font-size:11px;
+  font-family:'JetBrains Mono',monospace;
+}
+.pbadge.green{background:rgba(0,255,136,.12);border:1px solid rgba(0,255,136,.3);color:var(--g1);}
+.pbadge.cyan{background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.3);color:var(--g2);}
+.pbadge.pink{background:rgba(255,45,120,.1);border:1px solid rgba(255,45,120,.3);color:var(--pink);}
 
-/* PREVIEW PANEL */
-.preview-panel{
+/* LINK BUTTONS */
+.links-list{
+  width:100%;
+  max-width:440px;
   display:flex;
   flex-direction:column;
-  gap:1rem;
+  gap:.85rem;
 }
-.canvas-wrap{
-  background:var(--surface);
-  border:1px solid var(--border);
+
+.link-btn{
   display:flex;
   align-items:center;
-  justify-content:center;
-  padding:1rem;
+  gap:14px;
+  padding:14px 20px;
+  background:var(--glass-bg);
+  backdrop-filter:blur(16px);
+  border:1px solid var(--glass-border);
+  border-radius:14px;
+  color:var(--text);
+  text-decoration:none;
+  font-family:'Rajdhani',sans-serif;
+  font-size:16px;font-weight:700;
+  letter-spacing:.5px;
+  transition:all .25s;
   position:relative;
   overflow:hidden;
-}
-.canvas-wrap::before{
-  content:'PREVIEW';
-  position:absolute;
-  top:8px;right:10px;
-  font-size:9px;
-  letter-spacing:3px;
-  color:var(--muted);
-}
-#profileCanvas{
-  max-width:100%;
-  border:1px solid var(--border);
-  display:block;
-  image-rendering:pixelated;
-}
-.download-btn{
-  padding:12px;
-  background:var(--green-dim);
-  border:1px solid var(--green);
-  color:var(--green);
-  font-family:'Orbitron',sans-serif;
-  font-size:13px;
-  letter-spacing:2px;
   cursor:pointer;
+  animation:fadeUp .6s ease both;
+}
+.link-btn::before{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(120deg,transparent 0%,rgba(255,255,255,.05) 50%,transparent 100%);
+  transform:translateX(-100%);
+  transition:transform .4s ease;
+}
+.link-btn:hover::before{transform:translateX(100%);}
+.link-btn:hover{
+  background:var(--glass-hover);
+  transform:translateY(-2px) scale(1.01);
+  box-shadow:0 8px 32px rgba(0,0,0,.3);
+}
+.link-btn:active{transform:translateY(0) scale(.99);}
+
+.link-icon{
+  width:44px;height:44px;
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;
+  flex-shrink:0;
+}
+.link-text{flex:1;}
+.link-title{display:block;font-size:15px;font-weight:700;letter-spacing:.3px;}
+.link-sub{display:block;font-size:11px;color:var(--muted);letter-spacing:.3px;margin-top:1px;}
+.link-arrow{
+  font-size:18px;color:var(--muted);
+  transition:transform .2s,color .2s;
+}
+.link-btn:hover .link-arrow{transform:translateX(4px);color:var(--text);}
+
+/* Colored borders per platform */
+.lb-yt{border-color:rgba(255,0,0,.25);}
+.lb-yt:hover{border-color:rgba(255,0,0,.5);box-shadow:0 8px 32px rgba(255,0,0,.12);}
+.lb-yt .link-icon{background:rgba(255,0,0,.12);}
+
+.lb-dc{border-color:rgba(88,101,242,.25);}
+.lb-dc:hover{border-color:rgba(88,101,242,.5);box-shadow:0 8px 32px rgba(88,101,242,.12);}
+.lb-dc .link-icon{background:rgba(88,101,242,.12);}
+
+.lb-rb{border-color:rgba(0,162,255,.25);}
+.lb-rb:hover{border-color:rgba(0,162,255,.5);box-shadow:0 8px 32px rgba(0,162,255,.12);}
+.lb-rb .link-icon{background:rgba(0,162,255,.12);}
+
+.lb-ig{border-color:rgba(225,48,108,.25);}
+.lb-ig:hover{border-color:rgba(225,48,108,.5);box-shadow:0 8px 32px rgba(225,48,108,.12);}
+.lb-ig .link-icon{background:rgba(225,48,108,.12);}
+
+.lb-tt{border-color:rgba(255,0,80,.25);}
+.lb-tt:hover{border-color:rgba(255,0,80,.5);box-shadow:0 8px 32px rgba(255,0,80,.12);}
+.lb-tt .link-icon{background:rgba(255,0,80,.12);}
+
+.lb-shop{border-color:rgba(0,255,136,.2);}
+.lb-shop:hover{border-color:rgba(0,255,136,.5);box-shadow:0 8px 32px rgba(0,255,136,.1);}
+.lb-shop .link-icon{background:rgba(0,255,136,.1);}
+
+.lb-web{border-color:rgba(191,95,255,.25);}
+.lb-web:hover{border-color:rgba(191,95,255,.5);box-shadow:0 8px 32px rgba(191,95,255,.12);}
+.lb-web .link-icon{background:rgba(191,95,255,.1);}
+
+/* STATS ROW */
+.stats-row{
+  display:flex;gap:1.5rem;
+  margin:1.8rem 0 .2rem;
+  justify-content:center;
+}
+.stat-item{
   text-align:center;
-  transition:all .2s;
-  text-decoration:none;
+  background:var(--glass-bg);
+  backdrop-filter:blur(12px);
+  border:1px solid var(--glass-border);
+  border-radius:10px;
+  padding:10px 18px;
+  min-width:80px;
+  animation:fadeUp .6s ease both;
+}
+.stat-num{
+  font-family:'Orbitron',sans-serif;
+  font-size:18px;font-weight:700;
+  color:var(--g1);
   display:block;
-  text-transform:uppercase;
 }
-.download-btn:hover{background:var(--green);color:#000;}
+.stat-lbl{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
 
-/* DISCORD TIP */
-.discord-tip{
-  background:#1a1f36;
-  border:1px solid #2d3561;
-  padding:12px 14px;
-  font-size:12px;
-  color:#8892b0;
-  line-height:1.7;
+.link-footer{
+  text-align:center;margin-top:2rem;
+  font-size:11px;color:var(--muted);
+  letter-spacing:1px;
+  animation:fadeUp .6s 1.2s ease both;
 }
-.discord-tip strong{color:#7289da;}
 
-/* ============================================================
-   SECTION 2 — DEVLOG TIMELINE
-   ============================================================ */
-#sec-devlog{padding:3rem 2rem;}
+/* =========================================================
+   PAGE 2 — SZERVER FIGYELŐ
+   ========================================================= */
+#page-servers{
+  min-height:calc(100vh - 56px);
+  padding:2.5rem 1.5rem 3rem;
+}
 
-.devlog-layout{
-  max-width:860px;
+.server-header{
+  text-align:center;
+  margin-bottom:2.5rem;
+  animation:fadeUp .6s ease both;
+}
+.server-header h1{
+  font-family:'Orbitron',sans-serif;
+  font-size:clamp(1.4rem,4vw,2.2rem);
+  font-weight:900;
+  color:var(--g1);
+  text-shadow:0 0 24px rgba(0,255,136,.4);
+  margin-bottom:.5rem;
+  letter-spacing:1px;
+}
+.server-header p{color:var(--muted);font-size:14px;letter-spacing:.3px;}
+
+/* FILTER BAR */
+.filter-bar{
+  display:flex;
+  gap:.5rem;
+  flex-wrap:wrap;
+  justify-content:center;
+  margin-bottom:2rem;
+  animation:fadeUp .5s .15s ease both;
+}
+.filter-btn{
+  padding:7px 18px;
+  background:var(--glass-bg);
+  backdrop-filter:blur(10px);
+  border:1px solid var(--glass-border);
+  color:var(--muted);
+  font-family:'Rajdhani',sans-serif;
+  font-size:13px;font-weight:600;
+  letter-spacing:1px;text-transform:uppercase;
+  cursor:pointer;
+  border-radius:100px;
+  transition:all .2s;
+}
+.filter-btn:hover{color:var(--text);border-color:rgba(255,255,255,.2);}
+.filter-btn.active{
+  background:rgba(0,255,136,.1);
+  border-color:var(--g1);
+  color:var(--g1);
+  box-shadow:0 0 14px rgba(0,255,136,.15);
+}
+
+/* SERVER GRID */
+.server-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:1.2rem;
+  max-width:1100px;
   margin:0 auto;
 }
 
-/* ADD POST */
-.add-post-btn{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:12px 20px;
-  background:var(--surface);
-  border:1px dashed var(--border);
-  color:var(--muted);
-  font-family:'Rajdhani',sans-serif;
-  font-size:14px;
-  letter-spacing:1px;
-  cursor:pointer;
-  margin-bottom:2.5rem;
-  transition:all .2s;
-  width:100%;
-  text-align:left;
+.server-card{
+  background:var(--glass-bg);
+  backdrop-filter:blur(16px);
+  border:1px solid var(--glass-border);
+  border-radius:16px;
+  overflow:hidden;
+  transition:all .25s;
+  animation:fadeUp .5s ease both;
+  display:flex;flex-direction:column;
 }
-.add-post-btn:hover{border-color:var(--green);color:var(--green);}
-.add-icon{
-  width:30px;height:30px;
-  border:1px solid currentColor;
+.server-card:hover{
+  transform:translateY(-4px);
+  border-color:rgba(0,255,136,.25);
+  box-shadow:0 12px 40px rgba(0,0,0,.4),0 0 0 1px rgba(0,255,136,.08);
+}
+.server-card.hidden{display:none;}
+
+/* Card thumbnail */
+.card-thumb{
+  position:relative;
+  height:150px;
+  overflow:hidden;
+  background:#0c1428;
+}
+.card-thumb-bg{
+  width:100%;height:100%;
   display:flex;align-items:center;justify-content:center;
-  font-size:18px;
-  flex-shrink:0;
-}
-
-/* POST FORM MODAL */
-.modal-overlay{
-  position:fixed;inset:0;
-  background:rgba(0,0,0,0.85);
-  z-index:200;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:1rem;
-}
-.modal-overlay.open{display:flex;}
-.modal{
-  background:var(--surface);
-  border:1px solid var(--border);
-  padding:2rem;
-  width:100%;
-  max-width:520px;
+  font-size:64px;
   position:relative;
-  max-height:90vh;
-  overflow-y:auto;
 }
-.modal::before{
+.card-thumb-bg::before{
   content:'';
-  position:absolute;
-  top:0;left:0;right:0;
-  height:2px;
-  background:linear-gradient(90deg,var(--green),var(--cyan));
+  position:absolute;inset:0;
+  background:inherit;
+  filter:blur(0);
 }
-.modal h2{
-  font-family:'Orbitron',sans-serif;
-  font-size:14px;
-  color:var(--green);
-  letter-spacing:3px;
-  margin-bottom:1.5rem;
+.thumb-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(0deg,rgba(5,8,16,.9) 0%,transparent 60%);
 }
-.modal-close{
-  position:absolute;
-  top:12px;right:14px;
-  background:none;border:none;
-  color:var(--muted);cursor:pointer;
-  font-size:20px;
-  line-height:1;
-  transition:color .2s;
-}
-.modal-close:hover{color:var(--text);}
-.modal-actions{
-  display:flex;gap:10px;margin-top:1.2rem;
-}
-.modal-btn{
-  flex:1;
-  padding:10px;
-  border:1px solid var(--border);
-  background:transparent;
-  color:var(--text);
-  font-family:'Rajdhani',sans-serif;
-  font-size:14px;
-  font-weight:600;
-  cursor:pointer;
-  transition:all .2s;
-  letter-spacing:1px;
-}
-.modal-btn.primary{border-color:var(--green);color:var(--green);}
-.modal-btn.primary:hover{background:var(--green);color:#000;}
-.modal-btn:hover{border-color:var(--text);}
-
-/* TAG SELECTOR */
-.tag-opts{display:flex;gap:6px;flex-wrap:wrap;}
-.tag-opt{
+.card-status{
+  position:absolute;top:10px;right:10px;
   padding:3px 10px;
-  background:#08101e;
-  border:1px solid var(--border);
-  color:var(--muted);
-  font-size:12px;
-  cursor:pointer;
-  transition:all .2s;
-}
-.tag-opt:hover{border-color:var(--cyan);color:var(--cyan);}
-.tag-opt.sel{background:rgba(0,229,255,0.1);border-color:var(--cyan);color:var(--cyan);}
-
-/* IMAGE UPLOAD PREVIEW */
-.img-upload-area{
-  border:1px dashed var(--border);
-  padding:1.5rem;
-  text-align:center;
-  cursor:pointer;
-  transition:border-color .2s;
-  position:relative;
-  overflow:hidden;
-}
-.img-upload-area:hover{border-color:var(--green);}
-.img-upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;}
-.img-preview-thumb{
-  max-width:100%;
-  max-height:120px;
-  margin-top:10px;
-  display:none;
-  border:1px solid var(--border);
-}
-.upload-icon{font-size:28px;margin-bottom:6px;}
-.upload-txt{font-size:12px;color:var(--muted);}
-
-/* TIMELINE */
-.timeline{
-  position:relative;
-  padding-left:40px;
-}
-.timeline::before{
-  content:'';
-  position:absolute;
-  left:14px;top:0;bottom:0;
-  width:2px;
-  background:linear-gradient(180deg,var(--green),transparent);
-}
-
-.timeline-entry{
-  position:relative;
-  margin-bottom:2.5rem;
-  opacity:0;
-  transform:translateX(-20px);
-  animation:slideIn .4s ease forwards;
-}
-@keyframes slideIn{
-  to{opacity:1;transform:translateX(0);}
-}
-
-/* Timeline dot */
-.timeline-entry::before{
-  content:'';
-  position:absolute;
-  left:-33px;top:20px;
-  width:14px;height:14px;
-  border:2px solid var(--green);
-  background:var(--bg);
-  border-radius:50%;
-  box-shadow:0 0 10px var(--green);
-}
-
-/* Post card */
-.post-card{
-  background:var(--surface);
-  border:1px solid var(--border);
-  overflow:hidden;
-  transition:border-color .2s, transform .2s;
-  position:relative;
-}
-.post-card:hover{border-color:rgba(0,255,136,0.3);transform:translateX(4px);}
-.post-card::before{
-  content:'';
-  position:absolute;
-  left:0;top:0;bottom:0;
-  width:2px;
-  background:var(--green);
-  opacity:0;
-  transition:opacity .2s;
-}
-.post-card:hover::before{opacity:1;}
-
-.post-img{
-  width:100%;
-  max-height:260px;
-  object-fit:cover;
-  display:block;
-  border-bottom:1px solid var(--border);
-}
-.post-body{padding:1.2rem 1.4rem;}
-.post-meta{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin-bottom:.8rem;
-  flex-wrap:wrap;
-}
-.post-date{
-  font-family:'JetBrains Mono',monospace;
-  font-size:11px;
-  color:var(--muted);
+  border-radius:100px;
+  font-size:11px;font-family:'JetBrains Mono',monospace;
   letter-spacing:.5px;
 }
-.post-tag{
-  padding:2px 8px;
-  font-size:11px;
-  font-family:'JetBrains Mono',monospace;
-  border-radius:2px;
-  letter-spacing:.5px;
-}
-.tag-ruha{background:rgba(255,45,120,0.15);color:var(--pink);border:1px solid rgba(255,45,120,0.3);}
-.tag-mappa{background:rgba(0,229,255,0.1);color:var(--cyan);border:1px solid rgba(0,229,255,0.25);}
-.tag-update{background:rgba(255,230,0,0.1);color:var(--yellow);border:1px solid rgba(255,230,0,0.25);}
-.tag-sneak{background:rgba(0,255,136,0.1);color:var(--green);border:1px solid rgba(0,255,136,0.25);}
-.tag-egyeb{background:rgba(100,100,255,0.1);color:#8888ff;border:1px solid rgba(100,100,255,0.25);}
+.status-live{background:rgba(0,255,136,.15);border:1px solid rgba(0,255,136,.4);color:var(--g1);}
+.status-live::before{content:'● ';animation:blink 1.5s step-end infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.status-soon{background:rgba(255,230,0,.1);border:1px solid rgba(255,230,0,.3);color:var(--yellow);}
+.status-popular{background:rgba(255,45,120,.1);border:1px solid rgba(255,45,120,.3);color:var(--pink);}
 
-.post-title{
+.player-count{
+  position:absolute;bottom:10px;left:12px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;color:rgba(255,255,255,.7);
+  display:flex;align-items:center;gap:5px;
+}
+
+/* Card body */
+.card-body{padding:1rem 1.1rem;flex:1;display:flex;flex-direction:column;gap:.6rem;}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;}
+.card-name{
   font-family:'Orbitron',sans-serif;
-  font-size:15px;
-  font-weight:700;
-  color:var(--text);
-  margin-bottom:.6rem;
-  letter-spacing:.5px;
+  font-size:13px;font-weight:700;
+  color:var(--text);letter-spacing:.5px;
   line-height:1.3;
 }
-.post-content{
-  font-size:14px;
-  color:#8090b0;
-  line-height:1.7;
+.card-category{
+  padding:2px 8px;
+  border-radius:100px;
+  font-size:10px;font-family:'JetBrains Mono',monospace;
+  white-space:nowrap;
+  flex-shrink:0;
 }
-.post-footer{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:.8rem 1.4rem;
-  border-top:1px solid var(--border);
-  background:rgba(0,0,0,0.2);
+.cat-horror{background:rgba(255,45,120,.12);border:1px solid rgba(255,45,120,.3);color:var(--pink);}
+.cat-tycoon{background:rgba(255,230,0,.1);border:1px solid rgba(255,230,0,.3);color:var(--yellow);}
+.cat-roleplay{background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.3);color:var(--g2);}
+.cat-obby{background:rgba(191,95,255,.1);border:1px solid rgba(191,95,255,.3);color:var(--purple);}
+.cat-fps{background:rgba(255,120,0,.1);border:1px solid rgba(255,120,0,.3);color:#ff7800;}
+.cat-sim{background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.25);color:var(--g1);}
+.cat-rpg{background:rgba(100,200,255,.1);border:1px solid rgba(100,200,255,.3);color:#64c8ff;}
+
+.card-dev{
+  font-size:11px;color:var(--muted);
+  display:flex;align-items:center;gap:5px;
 }
-.post-reactions{
-  display:flex;gap:12px;
+.dev-flag{font-size:13px;}
+.card-desc{
+  font-size:13px;color:#7080a0;
+  line-height:1.65;
+  flex:1;
 }
-.reaction{
-  font-size:13px;
-  color:var(--muted);
-  cursor:pointer;
-  transition:color .2s;
+.card-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:.4rem;
+  gap:.5rem;
+}
+.card-rating{
   display:flex;align-items:center;gap:4px;
-  background:none;border:none;
-  font-family:'Rajdhani',sans-serif;
+  font-size:12px;color:var(--yellow);
+  font-family:'JetBrains Mono',monospace;
 }
-.reaction:hover{color:var(--green);}
-.reaction.liked{color:var(--green);}
-.del-post{
-  background:none;border:none;
-  color:var(--muted);cursor:pointer;
-  font-size:12px;transition:color .2s;
+.play-btn{
+  padding:8px 18px;
+  background:rgba(0,255,136,.1);
+  border:1px solid rgba(0,255,136,.35);
+  color:var(--g1);
+  font-family:'Orbitron',sans-serif;
+  font-size:11px;font-weight:700;
+  letter-spacing:1.5px;
+  cursor:pointer;
+  border-radius:8px;
+  text-decoration:none;
+  transition:all .2s;
+  display:inline-flex;align-items:center;gap:6px;
 }
-.del-post:hover{color:var(--pink);}
+.play-btn:hover{
+  background:var(--g1);
+  color:#000;
+  box-shadow:0 0 18px rgba(0,255,136,.3);
+}
 
-/* EMPTY STATE */
-.empty-state{
+/* NO RESULTS */
+.no-results{
+  grid-column:1/-1;
   text-align:center;
-  padding:4rem 2rem;
+  padding:4rem;
   color:var(--muted);
+  font-size:14px;
 }
-.empty-state .empty-icon{font-size:3rem;margin-bottom:1rem;}
-.empty-state p{font-size:14px;line-height:1.8;}
+.no-results .nr-icon{font-size:3rem;margin-bottom:1rem;display:block;}
 
-/* FOOTER NOTE */
-.footer-note{
-  text-align:center;
-  padding:2rem;
-  font-size:12px;
-  color:var(--muted);
-  letter-spacing:1px;
-  border-top:1px solid var(--border);
-  margin-top:3rem;
+/* =========================================================
+   SHARED ANIMATIONS
+   ========================================================= */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(20px);}
+  to{opacity:1;transform:translateY(0);}
 }
 
-/* RESPONSIVE */
-@media(max-width:700px){
-  .card-builder{grid-template-columns:1fr;}
-  .timeline{padding-left:30px;}
+/* MOBILE */
+@media(max-width:500px){
+  .stats-row{gap:1rem;}
+  .stat-item{padding:8px 12px;min-width:65px;}
   nav{padding:0 1rem;}
-  #sec-card,#sec-devlog{padding:2rem 1rem;}
 }
 </style>
 </head>
 <body>
 
+<!-- BG ORBS -->
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<!-- NAV -->
 <nav>
-  <div class="nav-logo">KRIS<span>3D</span>LAB</div>
-  <div class="nav-tabs">
-    <button class="nav-tab active" onclick="showSection('card',this)">🎴 Profil Kártya</button>
-    <button class="nav-tab" onclick="showSection('devlog',this)">📋 DevLog</button>
+  <div class="nav-logo">KRIS<em>3D</em>LAB</div>
+  <div class="nav-pills">
+    <button class="pill active" onclick="showPage('links',this)">🔗 Linkek</button>
+    <button class="pill" onclick="showPage('servers',this)">🎮 Szerverek</button>
   </div>
 </nav>
 
-<!-- ==================== SECTION: KÁRTYA ==================== -->
-<section class="section active" id="sec-card">
-  <div class="section-header">
-    <h1>PROFIL KÁRTYA GENERÁTOR</h1>
-    <p>Állítsd össze a saját Kris3DLab-stílusú kártyádat — töltsd le és tedd ki Discordra!</p>
+<!-- ==================== PAGE: LINKS ==================== -->
+<div class="page active" id="page-links">
+
+  <!-- PROFILE HEAD -->
+  <div class="profile-head">
+    <div class="avatar-ring">
+      <div class="avatar-inner">👾</div>
+    </div>
+    <div class="profile-name">Kris3DLab</div>
+    <div class="profile-bio">Magyar Roblox fejlesztő & creator<br>Ruhák · Mappák · Tutorialok 🇭🇺</div>
+    <div class="profile-badges">
+      <span class="pbadge green">🔥 Creator</span>
+      <span class="pbadge cyan">💎 Dev</span>
+      <span class="pbadge pink">🇭🇺 Magyar</span>
+    </div>
   </div>
 
-  <div class="card-builder">
-    <!-- FORM -->
-    <div class="form-panel">
-      <h2>⚙ Kártya beállítások</h2>
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-item" style="animation-delay:.2s">
+      <span class="stat-num" id="cnt-yt">0</span>
+      <span class="stat-lbl">Feliratkozó</span>
+    </div>
+    <div class="stat-item" style="animation-delay:.3s">
+      <span class="stat-num" id="cnt-dc">0</span>
+      <span class="stat-lbl">Discord tag</span>
+    </div>
+    <div class="stat-item" style="animation-delay:.4s">
+      <span class="stat-num" id="cnt-rb">0</span>
+      <span class="stat-lbl">Roblox követő</span>
+    </div>
+  </div>
 
-      <div class="form-group">
-        <label>Felhasználónév</label>
-        <input class="form-input" id="inp-name" type="text" placeholder="pl. Kris3DLab" maxlength="20" oninput="livePreview()"/>
+  <!-- LINKS -->
+  <div class="links-list">
+
+    <a href="https://youtube.com/@kris3dlab" target="_blank" class="link-btn lb-yt" style="animation-delay:.15s">
+      <div class="link-icon">📺</div>
+      <div class="link-text">
+        <span class="link-title">YouTube</span>
+        <span class="link-sub">Roblox tutorialok & devlogok</span>
       </div>
+      <span class="link-arrow">→</span>
+    </a>
 
-      <div class="form-group">
-        <label>Tagsor / Slogan</label>
-        <input class="form-input" id="inp-tag" type="text" placeholder="pl. Roblox Developer 🔥" maxlength="32" oninput="livePreview()"/>
+    <a href="https://discord.gg/kris3dlab" target="_blank" class="link-btn lb-dc" style="animation-delay:.22s">
+      <div class="link-icon">💬</div>
+      <div class="link-text">
+        <span class="link-title">Discord Szerver</span>
+        <span class="link-sub">Csatlakozz a közösséghez!</span>
       </div>
+      <span class="link-arrow">→</span>
+    </a>
 
-      <div class="form-group">
-        <label>Kedvenc Roblox játék</label>
-        <select class="form-input" id="inp-game" onchange="livePreview()">
-          <option value="Adopt Me!">🐾 Adopt Me!</option>
-          <option value="Blox Fruits">⚔️ Blox Fruits</option>
-          <option value="Brookhaven RP">🏘️ Brookhaven RP</option>
-          <option value="Tower of Hell">🗼 Tower of Hell</option>
-          <option value="Murder Mystery 2">🔪 Murder Mystery 2</option>
-          <option value="Jailbreak">🚓 Jailbreak</option>
-          <option value="Anime Adventures">🌸 Anime Adventures</option>
-          <option value="Pet Simulator X">🐶 Pet Simulator X</option>
-          <option value="Arsenal">🎯 Arsenal</option>
-          <option value="Natural Disaster">🌊 Natural Disaster</option>
-          <option value="Saját játék">⭐ Saját játék</option>
-        </select>
+    <a href="https://www.roblox.com/users/kris3dlab" target="_blank" class="link-btn lb-rb" style="animation-delay:.29s">
+      <div class="link-icon">🎮</div>
+      <div class="link-text">
+        <span class="link-title">Roblox Profil</span>
+        <span class="link-sub">Követés & játékok megtekintése</span>
       </div>
+      <span class="link-arrow">→</span>
+    </a>
 
-      <div class="form-group">
-        <label>Avatar emoji / karakter</label>
-        <input class="form-input" id="inp-avatar" type="text" placeholder="pl. 🧑‍💻 vagy 👾" maxlength="4" oninput="livePreview()"/>
+    <a href="https://instagram.com/kris3dlab" target="_blank" class="link-btn lb-ig" style="animation-delay:.36s">
+      <div class="link-icon">📸</div>
+      <div class="link-text">
+        <span class="link-title">Instagram</span>
+        <span class="link-sub">Behind the scenes & sneak peekek</span>
       </div>
+      <span class="link-arrow">→</span>
+    </a>
 
-      <div class="form-group">
-        <label>Kártya szín téma</label>
-        <div class="color-swatches" id="swatches">
-          <div class="swatch selected" data-color="#00ff88" style="background:linear-gradient(135deg,#00ff88,#00cc66);" onclick="selectColor(this,'#00ff88')"></div>
-          <div class="swatch" data-color="#00e5ff" style="background:linear-gradient(135deg,#00e5ff,#0077ff);" onclick="selectColor(this,'#00e5ff')"></div>
-          <div class="swatch" data-color="#ff2d78" style="background:linear-gradient(135deg,#ff2d78,#ff6b00);" onclick="selectColor(this,'#ff2d78')"></div>
-          <div class="swatch" data-color="#ffe600" style="background:linear-gradient(135deg,#ffe600,#ff9900);" onclick="selectColor(this,'#ffe600')"></div>
-          <div class="swatch" data-color="#bf5fff" style="background:linear-gradient(135deg,#bf5fff,#ff2d78);" onclick="selectColor(this,'#bf5fff')"></div>
-          <div class="swatch" data-color="#ffffff" style="background:linear-gradient(135deg,#ffffff,#aaaacc);" onclick="selectColor(this,'#ffffff')"></div>
+    <a href="https://tiktok.com/@kris3dlab" target="_blank" class="link-btn lb-tt" style="animation-delay:.43s">
+      <div class="link-icon">🎵</div>
+      <div class="link-text">
+        <span class="link-title">TikTok</span>
+        <span class="link-sub">Rövid Roblox videók & trendek</span>
+      </div>
+      <span class="link-arrow">→</span>
+    </a>
+
+    <a href="https://www.roblox.com/catalog" target="_blank" class="link-btn lb-shop" style="animation-delay:.50s">
+      <div class="link-icon">🛒</div>
+      <div class="link-text">
+        <span class="link-title">Roblox Shop</span>
+        <span class="link-sub">Vásárold meg a ruháimat!</span>
+      </div>
+      <span class="link-arrow">→</span>
+    </a>
+
+    <a href="#" class="link-btn lb-web" style="animation-delay:.57s" onclick="showPage('servers',document.querySelectorAll('.pill')[1]);return false;">
+      <div class="link-icon">🌐</div>
+      <div class="link-text">
+        <span class="link-title">Magyar Roblox Szerverek</span>
+        <span class="link-sub">Legjobb magyar közösségek listája</span>
+      </div>
+      <span class="link-arrow">→</span>
+    </a>
+
+  </div>
+
+  <div class="link-footer">© 2025 Kris3DLab · Minden jog fenntartva 🔒</div>
+</div>
+
+<!-- ==================== PAGE: SERVERS ==================== -->
+<div class="page" id="page-servers">
+
+  <div class="server-header">
+    <h1>🇭🇺 MAGYAR ROBLOX SZERVEREK</h1>
+    <p>A legjobb magyar fejlesztésű és magyar közösségű Roblox játékok egy helyen</p>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterServers('mind',this)">✦ Mind</button>
+    <button class="filter-btn" onclick="filterServers('horror',this)">👻 Horror</button>
+    <button class="filter-btn" onclick="filterServers('tycoon',this)">💰 Tycoon</button>
+    <button class="filter-btn" onclick="filterServers('roleplay',this)">🏘️ Roleplay</button>
+    <button class="filter-btn" onclick="filterServers('obby',this)">🗼 Obby</button>
+    <button class="filter-btn" onclick="filterServers('fps',this)">🎯 FPS</button>
+    <button class="filter-btn" onclick="filterServers('sim',this)">🐾 Sim</button>
+    <button class="filter-btn" onclick="filterServers('rpg',this)">⚔️ RPG</button>
+  </div>
+
+  <!-- GRID -->
+  <div class="server-grid" id="server-grid">
+
+    <div class="server-card" data-cat="horror">
+      <div class="card-thumb">
+        <div class="card-thumb-bg" style="background:linear-gradient(135deg,#1a0020,#3d0030);">👻</div>
+        <div class="thumb-overlay"></div>
+        <span class="card-status status-live">Élő</span>
+        <div class="player-count">👥 1,247 játékos</div>
+      </div>
+      <div class="card-body">
+        <div class="card-top">
+          <div class="card-name">Kísértett Kastély</div>
+          <span class="card-category cat-horror">Horror</span>
+        </div>
+        <div class="card-dev"><span class="dev-flag">🇭🇺</span> Magyar fejlesztő: GhostHunterHU</div>
+        <div class="card-desc">Fedezd fel a kastély titkait 4 baráttal! Magyar hangok, egyedi pályák és folyamatos frissítések. Az egyik legismertebb magyar horror játék.</div>
+        <div class="card-footer">
+          <div class="card-rating">⭐ 4.8 <span style="color:var(--muted)">(2.1k értékelés)</span></div>
+          <a href="https://www.roblox.com" target="_blank" class="play-btn">▶ JÁTSZOK</a>
         </div>
       </div>
+    </div>
 
-      <div class="form-group">
-        <label>Jelvények (max 3)</label>
-        <div class="badge-grid" id="badges">
-          <div class="badge-opt" onclick="toggleBadge(this,'🔥 Top Dev')">🔥 Top Dev</div>
-          <div class="badge-opt" onclick="toggleBadge(this,'⭐ Creator')">⭐ Creator</div>
-          <div class="badge-opt" onclick="toggleBadge(this,'🏆 Pro')">🏆 Pro</div>
-          <div class="badge-opt" onclick="toggleBadge(this,'💎 VIP')">💎 VIP</div>
-          <div class="badge-opt" onclick="toggleBadge(this,'🎮 Gamer')">🎮 Gamer</div>
-          <div class="badge-opt" onclick="toggleBadge(this,'🧑‍💻 Coder')">🧑‍💻 Coder</div>
-          <div class="badge-opt" onclick="toggleBadge(this,'🎨 Artist')">🎨 Artist</div>
-          <div class="badge-opt selected" onclick="toggleBadge(this,'🇭🇺 Magyar')">🇭🇺 Magyar</div>
+    <div class="server-card" data-cat="tycoon">
+      <div class="card-thumb">
+        <div class="card-thumb-bg" style="background:linear-gradient(135deg,#1a1500,#3d2d00);">🏭</div>
+        <div class="thumb-overlay"></div>
+        <span class="card-status status-popular">🔥 Népszerű</span>
+        <div class="player-count">👥 3,890 játékos</div>
+      </div>
+      <div class="card-body">
+        <div class="card-top">
+          <div class="card-name">Magyar Gyár Tycoon</div>
+          <span class="card-category cat-tycoon">Tycoon</span>
+        </div>
+        <div class="card-dev"><span class="dev-flag">🇭🇺</span> Magyar fejlesztő: FactoryKingHU</div>
+        <div class="card-desc">Építsd fel a saját gyáradat! Magyar felület, részletes gazdasági rendszer. Heti versenyek és különleges jutalmak várnak!</div>
+        <div class="card-footer">
+          <div class="card-rating">⭐ 4.6 <span style="color:var(--muted)">(5.4k értékelés)</span></div>
+          <a href="https://www.roblox.com" target="_blank" class="play-btn">▶ JÁTSZOK</a>
         </div>
       </div>
-
-      <button class="gen-btn" onclick="generateCard()"><span>✦ KÁRTYA GENERÁLÁSA</span></button>
     </div>
 
-    <!-- PREVIEW -->
-    <div class="preview-panel">
-      <div class="canvas-wrap">
-        <canvas id="profileCanvas" width="500" height="280"></canvas>
+    <div class="server-card" data-cat="roleplay">
+      <div class="card-thumb">
+        <div class="card-thumb-bg" style="background:linear-gradient(135deg,#001a2e,#002a4a);">🏙️</div>
+        <div class="thumb-overlay"></div>
+        <span class="card-status status-live">Élő</span>
+        <div class="player-count">👥 2,105 játékos</div>
       </div>
-      <a id="download-link" class="download-btn" onclick="downloadCard()">⬇ LETÖLTÉS (PNG)</a>
-      <div class="discord-tip">
-        <strong>💬 Discord tipp:</strong> Töltsd le a képet, majd Discord profil → Banner vagy szerver profilkép helyre tedd fel! A kártya 500×280px méretű, ami tökéletes banner arányhoz.
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ==================== SECTION: DEVLOG ==================== -->
-<section class="section" id="sec-devlog">
-  <div class="section-header">
-    <h1>LABOR NAPLÓ</h1>
-    <p>Sneak peekek, fejlesztési naplók, és minden ami éppen készül a Roblox Studióban.</p>
-  </div>
-
-  <div class="devlog-layout">
-    <button class="add-post-btn" onclick="openModal()">
-      <div class="add-icon">+</div>
-      <span>ÚJ DEVLOG BEJEGYZÉS HOZZÁADÁSA</span>
-    </button>
-
-    <div class="timeline" id="timeline">
-      <!-- JS renders here -->
-    </div>
-  </div>
-
-  <div class="footer-note">KRIS3DLAB © 2025 — Minden jog fenntartva 🔒</div>
-</section>
-
-<!-- ==================== MODAL ==================== -->
-<div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal()">✕</button>
-    <h2>📝 ÚJ BEJEGYZÉS</h2>
-
-    <div class="form-group">
-      <label>Cím</label>
-      <input class="form-input" id="m-title" placeholder="pl. Új ruha sneak peek 👀" type="text"/>
-    </div>
-
-    <div class="form-group">
-      <label>Kategória</label>
-      <div class="tag-opts">
-        <div class="tag-opt" onclick="toggleTag(this,'ruha')">👗 Ruha</div>
-        <div class="tag-opt" onclick="toggleTag(this,'mappa')">🗺️ Mappa</div>
-        <div class="tag-opt" onclick="toggleTag(this,'update')">🔄 Update</div>
-        <div class="tag-opt sel" onclick="toggleTag(this,'sneak')">👀 Sneak Peek</div>
-        <div class="tag-opt" onclick="toggleTag(this,'egyeb')">📌 Egyéb</div>
+      <div class="card-body">
+        <div class="card-top">
+          <div class="card-name">Budapest RP</div>
+          <span class="card-category cat-roleplay">Roleplay</span>
+        </div>
+        <div class="card-dev"><span class="dev-flag">🇭🇺</span> Magyar fejlesztő: BPCityDev</div>
+        <div class="card-desc">Élj virtuális életet Budapest utcáin! Magyar felirat, ikonikus helyszínek: Lánchíd, Parlament, Várnegyed. A leghűbb magyar RP élmény!</div>
+        <div class="card-footer">
+          <div class="card-rating">⭐ 4.9 <span style="color:var(--muted)">(8.2k értékelés)</span></div>
+          <a href="https://www.roblox.com" target="_blank" class="play-btn">▶ JÁTSZOK</a>
+        </div>
       </div>
     </div>
 
-    <div class="form-group">
-      <label>Tartalom / Leírás</label>
-      <textarea class="form-input" id="m-content" rows="4" placeholder="Mit dolgoztál? Mit lehet már látni? Mikor jön ki?..." style="resize:vertical;"></textarea>
-    </div>
-
-    <div class="form-group">
-      <label>Kép (opcionális)</label>
-      <div class="img-upload-area" id="upload-area" onclick="document.getElementById('m-img').click()">
-        <div class="upload-icon">🖼️</div>
-        <div class="upload-txt">Kattints a képfeltöltéshez<br><small>JPG, PNG, GIF — max 5MB</small></div>
-        <input type="file" id="m-img" accept="image/*" style="display:none" onchange="previewImage(event)"/>
-        <img id="img-thumb" class="img-preview-thumb" alt="preview"/>
+    <div class="server-card" data-cat="obby">
+      <div class="card-thumb">
+        <div class="card-thumb-bg" style="background:linear-gradient(135deg,#15002e,#2d0060);">🗼</div>
+        <div class="thumb-overlay"></div>
+        <span class="card-status status-live">Élő</span>
+        <div class="player-count">👥 892 játékos</div>
+      </div>
+      <div class="card-body">
+        <div class="card-top">
+          <div class="card-name">Magyar Nehéz Obby</div>
+          <span class="card-category cat-obby">Obby</span>
+        </div>
+        <div class="card-dev"><span class="dev-flag">🇭🇺</span> Magyar fejlesztő: ObbyMasterHU</div>
+        <div class="card-desc">100 szint, fokozódó nehézséggel! Magyar hangeffektek, egyedi pályaelemek és titkos shortcutok. Versenyezz a legjobb időért!</div>
+        <div class="card-footer">
+          <div class="card-rating">⭐ 4.5 <span style="color:var(--muted)">(1.8k értékelés)</span></div>
+          <a href="https://www.roblox.com" target="_blank" class="play-btn">▶ JÁTSZOK</a>
+        </div>
       </div>
     </div>
 
-    <div class="modal-actions">
-      <button class="modal-btn" onclick="closeModal()">Mégse</button>
-      <button class="modal-btn primary" onclick="submitPost()">✦ Közzétesz</button>
+    <div class="server-card" data-cat="fps">
+      <div class="card-thumb">
+        <div class="card-thumb-bg" style="background:linear-gradient(135deg,#1a0a00,#3d1500);">🎯</div>
+        <div class="thumb-overlay"></div>
+        <span class="card-status status-popular">🔥 Népszerű</span>
+        <div class="player-count">👥 4,521 játékos</div>
+      </div>
+      <div class="card-body">
+        <div class="card-top">
+          <div class="card-name">HU Strike Force</div>
+          <span class="card-category cat-fps">FPS</span>
+        </div>
+        <div class="card-dev"><span class="dev-flag">🇭🇺</span> Magyar fejlesztő: TacticalHU</div>
+        <div class="card-desc">Magyar csapatalapú lövöldözős játék. Egyedi pályák, szezononkénti rangrendszer, és aktív magyar közösség. 5v5 taktikai csaták!</div>
+        <div class="card-footer">
+          <div class="card-rating">⭐ 4.7 <span style="color:var(--muted)">(6.7k értékelés)</span></div>
+          <a href="https://www.roblox.com" target="_blank" class="play-btn">▶ JÁTSZOK</a>
+        </div>
+      </div>
     </div>
+
+    <div class="server-card" data-cat="sim">
+      <div class="card-thumb">
+        <div class="card-thumb-bg" style="background:linear-gradient(135deg,#001a10,#003020);">🐾</div>
+        <div class="thumb-overlay"></div>
+        <span class="card-status status-live">Élő</span>
+        <div class="player-count">👥 1,674 játékos</div>
+      </div>
+      <div class="card-body">
+        <div class="card-top">
+          <div class="card-name">Állat Szimulátor HU</div>
+          <span class="card-category cat-sim">Sim</span>
+        </div>
+        <div class="card-dev"><span class="dev-flag">🇭🇺</span> Magyar fejlesztő: AnimalSimHU</div>
+        <div class="card-desc">Gyűjts össze ritka állatokat, fejleszd a farmodat! Magyar felület, heti eseményekkel és szezonális tartalmakkal. Minden korosztálynak!</div>
+        <div class="card-footer">
+          <div class="card-rating">⭐ 4.4 <span style="color:var(--muted)">(3.1k értékelés)</span></div>
+          <a href="https://www.roblox.com" target="_blank" class="play-btn">▶ JÁTSZOK</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="server-card" data-cat="rpg">
+      <div class="card-thumb">
+        <div class="card-thumb-bg" style="background:linear-gradient(135deg,#001020,#002040);">⚔️</div>
+        <div class="thumb-overlay"></div>
+        <span class="card-status status-soon">Hamarosan</span>
+        <div class="player-count">👥 Beta — 340 tesztelő</div>
+      </div>
+      <div class="card-body">
+        <div class="card-top">
+          <div class="card-name">Magyar Kard és Varázslat</div>
+          <span class="card-category cat-rpg">RPG</span>
+        </div>
+        <div class="card-dev"><span class="dev-flag">🇭🇺</span> Magyar fejlesztő: QuestMasterHU</div>
+        <div class="card-desc">Magyar fantasy világ, egyedi osztályrendszerrel! Lovagok, varázslók, nyilasok — válassz hőst és indulj el a kalandra. Nyílt béta hamarosan!</div>
+        <div class="card-footer">
+          <div class="card-rating">⭐ 4.9 <span style="color:var(--muted)">(beta — 900 értékelés)</span></div>
+          <a href="https://www.roblox.com" target="_blank" class="play-btn">▶ JÁTSZOK</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="server-card" data-cat="roleplay">
+      <div class="card-thumb">
+        <div class="card-thumb-bg" style="background:linear-gradient(135deg,#0a1a00,#1a3300);">🚓</div>
+        <div class="thumb-overlay"></div>
+        <span class="card-status status-live">Élő</span>
+        <div class="player-count">👥 987 játékos</div>
+      </div>
+      <div class="card-body">
+        <div class="card-top">
+          <div class="card-name">Magyar Rendőrség RP</div>
+          <span class="card-category cat-roleplay">Roleplay</span>
+        </div>
+        <div class="card-dev"><span class="dev-flag">🇭🇺</span> Magyar fejlesztő: CopRoleHU</div>
+        <div class="card-desc">Légy rendőr, bűnöző vagy polgár egy valósághű magyar városban! Részletes jogrendszer, egyenruhák és jármű-rendszer. Komoly RP élmény!</div>
+        <div class="card-footer">
+          <div class="card-rating">⭐ 4.6 <span style="color:var(--muted)">(2.3k értékelés)</span></div>
+          <a href="https://www.roblox.com" target="_blank" class="play-btn">▶ JÁTSZOK</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="no-results" id="no-results" style="display:none;">
+      <span class="nr-icon">🔍</span>
+      Nem találtunk szervert ebben a kategóriában.<br>
+      <span style="color:var(--muted);font-size:12px;">Hamarosan több játék kerül fel!</span>
+    </div>
+
   </div>
 </div>
 
 <script>
-// ============================================================
+// =========================================================
 // NAV
-// ============================================================
-function showSection(id, btn){
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
-  document.getElementById('sec-'+id).classList.add('active');
+// =========================================================
+function showPage(id, btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.pill').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
   btn.classList.add('active');
 }
 
-// ============================================================
-// CARD GENERATOR
-// ============================================================
-let cardColor = '#00ff88';
-let selectedBadges = ['🇭🇺 Magyar'];
-let imgDataURL = null;
-
-function selectColor(el, color){
-  document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('selected'));
-  el.classList.add('selected');
-  cardColor = color;
-  livePreview();
+// =========================================================
+// COUNTER ANIMATION
+// =========================================================
+function animCount(el, target, suffix, duration){
+  let start = 0;
+  const step = target / (duration / 16);
+  const timer = setInterval(()=>{
+    start = Math.min(start + step, target);
+    const val = Math.floor(start);
+    el.textContent = val >= 1000 ? (val/1000).toFixed(1)+'K' : val;
+    if(start >= target) clearInterval(timer);
+  }, 16);
 }
 
-function toggleBadge(el, badge){
-  if(el.classList.contains('selected')){
-    el.classList.remove('selected');
-    selectedBadges = selectedBadges.filter(b=>b!==badge);
-  } else {
-    if(selectedBadges.length >= 3) return;
-    el.classList.add('selected');
-    selectedBadges.push(badge);
-  }
-  livePreview();
-}
+window.addEventListener('load', ()=>{
+  setTimeout(()=>{
+    animCount(document.getElementById('cnt-yt'), 8700, 'K', 1400);
+    animCount(document.getElementById('cnt-dc'), 2340, '', 1600);
+    animCount(document.getElementById('cnt-rb'), 5200, 'K', 1500);
+  }, 500);
+});
 
-function livePreview(){ drawCard(false); }
-function generateCard(){ drawCard(true); }
+// =========================================================
+// SERVER FILTER
+// =========================================================
+function filterServers(cat, btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
 
-function drawCard(flash){
-  const canvas = document.getElementById('profileCanvas');
-  const ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
-
-  const name    = document.getElementById('inp-name').value || 'Kris3DLab';
-  const tagline = document.getElementById('inp-tag').value  || 'Roblox Developer 🔥';
-  const game    = document.getElementById('inp-game').value;
-  const avatar  = document.getElementById('inp-avatar').value || '👾';
-  const col     = cardColor;
-
-  // Helper: hex to rgb
-  function hexToRgb(hex){
-    const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
-    return {r,g,b};
-  }
-  const rgb = hexToRgb(col==='#ffffff'?'#aaaacc':col);
-
-  // --- BG ---
-  ctx.clearRect(0,0,W,H);
-  const bgGrad = ctx.createLinearGradient(0,0,W,H);
-  bgGrad.addColorStop(0,'#04060e');
-  bgGrad.addColorStop(1,'#0c1428');
-  ctx.fillStyle = bgGrad;
-  ctx.fillRect(0,0,W,H);
-
-  // Grid
-  ctx.strokeStyle = `rgba(${rgb.r},${rgb.g},${rgb.b},0.06)`;
-  ctx.lineWidth = 1;
-  for(let x=0;x<W;x+=30){ ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke(); }
-  for(let y=0;y<H;y+=30){ ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke(); }
-
-  // Corner accents
-  function corner(cx,cy,dx,dy){
-    ctx.strokeStyle=col;ctx.lineWidth=2.5;
-    ctx.shadowBlur=12;ctx.shadowColor=col;
-    ctx.beginPath();ctx.moveTo(cx,cy+dy*28);ctx.lineTo(cx,cy);ctx.lineTo(cx+dx*28,cy);ctx.stroke();
-    ctx.shadowBlur=0;
-  }
-  corner(10,10,1,1);corner(W-10,10,-1,1);corner(10,H-10,1,-1);corner(W-10,H-10,-1,-1);
-
-  // Top accent line
-  const topLine = ctx.createLinearGradient(0,0,W,0);
-  topLine.addColorStop(0,'transparent');
-  topLine.addColorStop(0.5,col);
-  topLine.addColorStop(1,'transparent');
-  ctx.fillStyle=topLine;ctx.fillRect(0,0,W,2);
-
-  // Bottom accent line
-  const botLine = ctx.createLinearGradient(0,0,W,0);
-  botLine.addColorStop(0,'transparent');
-  botLine.addColorStop(0.5,col);
-  botLine.addColorStop(1,'transparent');
-  ctx.fillStyle=botLine;ctx.fillRect(0,H-2,W,2);
-
-  // Diagonal deco
-  ctx.save();
-  ctx.globalAlpha=0.04;
-  ctx.fillStyle=col;
-  ctx.beginPath();ctx.moveTo(W*0.6,0);ctx.lineTo(W,0);ctx.lineTo(W*0.5,H);ctx.lineTo(W*0.2,H);ctx.closePath();ctx.fill();
-  ctx.restore();
-
-  // Left glow blob
-  const blob = ctx.createRadialGradient(80,H/2,0,80,H/2,120);
-  blob.addColorStop(0,`rgba(${rgb.r},${rgb.g},${rgb.b},0.15)`);
-  blob.addColorStop(1,'transparent');
-  ctx.fillStyle=blob;ctx.fillRect(0,0,W,H);
-
-  // AVATAR circle
-  const avatarX=80, avatarY=H/2-10;
-  ctx.save();
-  ctx.shadowBlur=30;ctx.shadowColor=col;
-  ctx.strokeStyle=col;ctx.lineWidth=2.5;
-  ctx.beginPath();ctx.arc(avatarX,avatarY,44,0,Math.PI*2);ctx.stroke();
-  ctx.restore();
-  ctx.save();
-  ctx.beginPath();ctx.arc(avatarX,avatarY,41,0,Math.PI*2);ctx.clip();
-  const avatarBg=ctx.createRadialGradient(avatarX,avatarY,0,avatarX,avatarY,41);
-  avatarBg.addColorStop(0,`rgba(${rgb.r},${rgb.g},${rgb.b},0.2)`);
-  avatarBg.addColorStop(1,'rgba(0,0,0,0.5)');
-  ctx.fillStyle=avatarBg;ctx.fillRect(0,0,W,H);
-  ctx.restore();
-  // Avatar emoji
-  ctx.font='44px serif';ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.fillText(avatar,avatarX,avatarY+2);
-
-  // NAME
-  ctx.save();
-  ctx.shadowBlur=20;ctx.shadowColor=col;
-  ctx.fillStyle=col;
-  ctx.font='bold 28px Orbitron, monospace';
-  ctx.textAlign='left';ctx.textBaseline='alphabetic';
-  ctx.fillText(name,148,H/2-30);
-  ctx.restore();
-
-  // TAGLINE
-  ctx.fillStyle='#8090b0';
-  ctx.font='14px Rajdhani, sans-serif';
-  ctx.textAlign='left';
-  ctx.fillText(tagline,150,H/2-6);
-
-  // Divider
-  ctx.fillStyle=`rgba(${rgb.r},${rgb.g},${rgb.b},0.3)`;
-  ctx.fillRect(148,H/2+4,220,1);
-
-  // GAME
-  ctx.fillStyle='#4a5a7a';
-  ctx.font='11px JetBrains Mono, monospace';
-  ctx.fillText('KEDVENC JÁTÉK',148,H/2+22);
-  ctx.fillStyle='#d0e0ff';
-  ctx.font='bold 15px Rajdhani, sans-serif';
-  ctx.fillText(game,148,H/2+40);
-
-  // BADGES
-  if(selectedBadges.length > 0){
-    let bx = 148;
-    const by = H/2+68;
-    selectedBadges.forEach(badge=>{
-      const tw = ctx.measureText(badge).width + 20;
-      ctx.fillStyle=`rgba(${rgb.r},${rgb.g},${rgb.b},0.12)`;
-      ctx.strokeStyle=`rgba(${rgb.r},${rgb.g},${rgb.b},0.5)`;
-      ctx.lineWidth=1;
-      ctx.fillRect(bx,by-14,tw,20);
-      ctx.strokeRect(bx,by-14,tw,20);
-      ctx.fillStyle=col;
-      ctx.font='11px JetBrains Mono, monospace';
-      ctx.textAlign='left';
-      ctx.fillText(badge,bx+10,by+1);
-      bx+=tw+8;
-    });
-  }
-
-  // KRIS3DLAB watermark
-  ctx.fillStyle=`rgba(${rgb.r},${rgb.g},${rgb.b},0.2)`;
-  ctx.font='bold 11px Orbitron, monospace';
-  ctx.textAlign='right';
-  ctx.fillText('KRIS3DLAB',W-16,H-12);
-
-  // Scan line effect
-  ctx.save();
-  for(let y=0;y<H;y+=4){
-    ctx.fillStyle='rgba(0,0,0,0.06)';
-    ctx.fillRect(0,y,W,2);
-  }
-  ctx.restore();
-
-  if(flash){
-    const btn=document.getElementById('download-link');
-    btn.style.background='var(--green)';
-    btn.style.color='#000';
-    setTimeout(()=>{btn.style.background='';btn.style.color='';},600);
-  }
-}
-
-function downloadCard(){
-  const canvas=document.getElementById('profileCanvas');
-  const name=document.getElementById('inp-name').value||'kris3dlab';
-  drawCard(false);
-  const link=document.createElement('a');
-  link.download=`${name.replace(/\s+/g,'_')}_kris3dlab_kartya.png`;
-  link.href=canvas.toDataURL('image/png');
-  link.click();
-}
-
-// Auto preview on load
-window.addEventListener('load', ()=>{ drawCard(false); });
-
-// ============================================================
-// DEVLOG
-// ============================================================
-let posts = [
-  {
-    id:1,
-    date:'2025-03-01',
-    title:'🔥 Új ruha kollekció — első sneak peek!',
-    tag:'sneak',
-    content:'Elkezdtem dolgozni az új tavaszi ruhakollekción! Neon zöld + fekete kombináció, amit még sehol nem láttatok. Kb. 2 héten belül jön ki a Roblox Store-ba. Mit szóltok az első vázlathoz? 👀',
-    img: null,
-    likes:14,
-    liked:false
-  },
-  {
-    id:2,
-    date:'2025-02-22',
-    title:'🗺️ Új mappa fejlesztés alatt',
-    tag:'mappa',
-    content:'Hónapok óta dolgoztam rajta és most már majdnem kész! Cyberpunk téma, neon fények, hatalmas város. Ez lesz az eddigi legnagyobb projektem a Studióban. Stay tuned! 🔧',
-    img: null,
-    likes:31,
-    liked:false
-  },
-  {
-    id:3,
-    date:'2025-02-10',
-    title:'⚙️ Script update — jobb teljesítmény',
-    tag:'update',
-    content:'Nagy script cleanup! Az FPS javult kb. 15%-kal, és megjavítottam azt a régi bugot ami random kickelte a játékosokat. Részletes patch notes hamarosan.',
-    img: null,
-    likes:8,
-    liked:false
-  }
-];
-let nextId = 4;
-let selectedTag = 'sneak';
-let uploadedImgData = null;
-
-function renderTimeline(){
-  const container = document.getElementById('timeline');
-  if(posts.length === 0){
-    container.innerHTML=`<div class="empty-state"><div class="empty-icon">📭</div><p>Még nincs bejegyzés.<br>Kattints a + gombra az első devlog hozzáadásához!</p></div>`;
-    return;
-  }
-  container.innerHTML = posts.map((p,i)=>`
-    <div class="timeline-entry" style="animation-delay:${i*0.08}s">
-      <div class="post-card">
-        ${p.img ? `<img src="${p.img}" class="post-img" alt="${p.title}"/>` : ''}
-        <div class="post-body">
-          <div class="post-meta">
-            <span class="post-date">${formatDate(p.date)}</span>
-            <span class="post-tag tag-${p.tag}">${tagLabel(p.tag)}</span>
-          </div>
-          <div class="post-title">${p.title}</div>
-          <div class="post-content">${p.content}</div>
-        </div>
-        <div class="post-footer">
-          <div class="post-reactions">
-            <button class="reaction ${p.liked?'liked':''}" onclick="toggleLike(${p.id})">
-              ${p.liked?'💚':'🤍'} ${p.likes}
-            </button>
-            <button class="reaction" onclick="copyLink(${p.id})">🔗 Megosztás</button>
-          </div>
-          <button class="del-post" onclick="deletePost(${p.id})" title="Törlés">🗑</button>
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
-
-function formatDate(d){
-  const dt = new Date(d);
-  return dt.toLocaleDateString('hu-HU',{year:'numeric',month:'long',day:'numeric'});
-}
-
-function tagLabel(t){
-  const map={ruha:'👗 Ruha',mappa:'🗺️ Mappa',update:'🔄 Update',sneak:'👀 Sneak Peek',egyeb:'📌 Egyéb'};
-  return map[t]||t;
-}
-
-function toggleLike(id){
-  const p = posts.find(x=>x.id===id);
-  if(!p) return;
-  p.liked = !p.liked;
-  p.likes += p.liked ? 1 : -1;
-  renderTimeline();
-}
-
-function deletePost(id){
-  if(!confirm('Biztosan törlöd ezt a bejegyzést?')) return;
-  posts = posts.filter(p=>p.id!==id);
-  renderTimeline();
-}
-
-function copyLink(id){
-  navigator.clipboard.writeText(window.location.href+'#post-'+id).catch(()=>{});
-  alert('Link másolva! 🔗');
-}
-
-// Modal
-function openModal(){
-  document.getElementById('modal-overlay').classList.add('open');
-  document.getElementById('m-title').focus();
-  selectedTag = 'sneak';
-  document.querySelectorAll('.tag-opt').forEach(t=>t.classList.remove('sel'));
-  document.querySelector('.tag-opt[onclick*="sneak"]').classList.add('sel');
-  document.getElementById('m-content').value='';
-  document.getElementById('m-title').value='';
-  document.getElementById('img-thumb').style.display='none';
-  document.getElementById('img-thumb').src='';
-  uploadedImgData=null;
-}
-
-function closeModal(){
-  document.getElementById('modal-overlay').classList.remove('open');
-}
-
-function closeModalOutside(e){
-  if(e.target===document.getElementById('modal-overlay')) closeModal();
-}
-
-function toggleTag(el,tag){
-  document.querySelectorAll('.tag-opt').forEach(t=>t.classList.remove('sel'));
-  el.classList.add('sel');
-  selectedTag=tag;
-}
-
-function previewImage(e){
-  const file=e.target.files[0];
-  if(!file) return;
-  if(file.size > 5*1024*1024){ alert('A fájl túl nagy! Max 5MB.'); return; }
-  const reader=new FileReader();
-  reader.onload=ev=>{
-    uploadedImgData=ev.target.result;
-    const thumb=document.getElementById('img-thumb');
-    thumb.src=uploadedImgData;
-    thumb.style.display='block';
-  };
-  reader.readAsDataURL(file);
-}
-
-function submitPost(){
-  const title=document.getElementById('m-title').value.trim();
-  const content=document.getElementById('m-content').value.trim();
-  if(!title){ alert('Kérlek adj meg egy címet!'); return; }
-  if(!content){ alert('Kérlek írj valamit a bejegyzésbe!'); return; }
-
-  const today=new Date().toISOString().slice(0,10);
-  posts.unshift({
-    id: nextId++,
-    date: today,
-    title,
-    tag: selectedTag,
-    content,
-    img: uploadedImgData||null,
-    likes: 0,
-    liked: false
+  const cards = document.querySelectorAll('.server-card[data-cat]');
+  let visible = 0;
+  cards.forEach(card=>{
+    if(cat === 'mind' || card.dataset.cat === cat){
+      card.classList.remove('hidden');
+      visible++;
+    } else {
+      card.classList.add('hidden');
+    }
   });
-  closeModal();
-  renderTimeline();
+  document.getElementById('no-results').style.display = visible === 0 ? 'block' : 'none';
 }
-
-// Init
-renderTimeline();
 </script>
 </body>
 </html>
