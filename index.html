@@ -3,739 +3,846 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Kris3DLab — Links & Magyar Roblox</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<title>DreamForge Studios</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Syne+Mono&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
 <style>
-/* =========================================================
-   ROOT & RESET
-   ========================================================= */
+/* ════════════════════════════════════════
+   ROOT
+════════════════════════════════════════ */
 :root{
-  --g1:#00ff88;
-  --g2:#00e5ff;
-  --pink:#ff2d78;
-  --yellow:#ffe600;
-  --purple:#bf5fff;
-  --bg-dark:#050810;
-  --glass-bg:rgba(255,255,255,0.04);
-  --glass-border:rgba(255,255,255,0.10);
-  --glass-hover:rgba(255,255,255,0.08);
-  --text:#e8f0ff;
-  --muted:#5a6a8a;
+  --bg:#06070d;
+  --surface:#0d0f1a;
+  --border:#1c1f2e;
+  --border2:#252840;
+  --blue:#4f7fff;
+  --blue2:#7aa3ff;
+  --cyan:#00d4ff;
+  --forge:#ff6b2b;
+  --forge2:#ff9a5c;
+  --white:#eef0ff;
+  --muted:#5a5f7a;
+  --muted2:#7a7f9a;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 body{
-  font-family:'Rajdhani',sans-serif;
-  background:var(--bg-dark);
-  color:var(--text);
-  min-height:100vh;
+  background:var(--bg);
+  color:var(--white);
+  font-family:'DM Sans',sans-serif;
   overflow-x:hidden;
 }
-::-webkit-scrollbar{width:5px;}
-::-webkit-scrollbar-track{background:#050810;}
-::-webkit-scrollbar-thumb{background:#00ff8830;border-radius:3px;}
+::selection{background:var(--blue);color:#fff;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--blue);border-radius:2px;}
 
-/* =========================================================
-   ANIMATED BG — shared
-   ========================================================= */
-.bg-canvas{
-  position:fixed;inset:0;
-  z-index:0;
-  pointer-events:none;
-}
-/* Orbs */
-.orb{
-  position:fixed;
-  border-radius:50%;
-  filter:blur(80px);
-  opacity:.18;
-  pointer-events:none;
-  animation:orbFloat 12s ease-in-out infinite alternate;
-}
-.orb1{width:500px;height:500px;background:radial-gradient(circle,#00ff88,transparent);top:-150px;left:-100px;animation-delay:0s;}
-.orb2{width:400px;height:400px;background:radial-gradient(circle,#00e5ff,transparent);bottom:-100px;right:-80px;animation-delay:-5s;}
-.orb3{width:300px;height:300px;background:radial-gradient(circle,#bf5fff,transparent);top:40%;left:50%;animation-delay:-9s;}
-@keyframes orbFloat{
-  0%{transform:translate(0,0) scale(1);}
-  100%{transform:translate(30px,40px) scale(1.08);}
-}
-/* Grid */
-body::before{
-  content:'';
+/* ════════════════════════════════════════
+   CANVAS — animated forge sparks
+════════════════════════════════════════ */
+#bg-canvas{
   position:fixed;inset:0;z-index:0;
-  background-image:
-    linear-gradient(rgba(0,255,136,0.03) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(0,255,136,0.03) 1px,transparent 1px);
-  background-size:44px 44px;
-  pointer-events:none;
+  pointer-events:none;opacity:.6;
 }
 
-/* =========================================================
+/* ════════════════════════════════════════
    NAV
-   ========================================================= */
+════════════════════════════════════════ */
 nav{
-  position:sticky;top:0;z-index:50;
-  background:rgba(5,8,16,0.75);
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 3rem;
+  height:64px;
+  background:rgba(6,7,13,0.85);
   backdrop-filter:blur(20px);
-  border-bottom:1px solid rgba(255,255,255,0.07);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 1.5rem;
-  height:56px;
+  border-bottom:1px solid var(--border);
 }
-.nav-logo{
-  font-family:'Orbitron',sans-serif;
-  font-size:1.05rem;
-  font-weight:900;
-  color:var(--g1);
-  text-shadow:0 0 18px rgba(0,255,136,.5);
-  letter-spacing:2px;
-}
-.nav-logo em{color:var(--text);font-style:normal;text-shadow:none;}
-.nav-pills{display:flex;gap:4px;}
-.pill{
-  padding:5px 18px;
-  background:transparent;
-  border:1px solid transparent;
-  color:var(--muted);
-  font-family:'Rajdhani',sans-serif;
-  font-size:13px;font-weight:600;
-  letter-spacing:1px;text-transform:uppercase;
-  cursor:pointer;
-  border-radius:100px;
-  transition:all .2s;
-}
-.pill:hover{color:var(--g1);border-color:rgba(0,255,136,.3);}
-.pill.active{
-  color:var(--g1);
-  border-color:var(--g1);
-  background:rgba(0,255,136,.08);
-  box-shadow:0 0 16px rgba(0,255,136,.15);
-}
-
-/* =========================================================
-   SECTIONS
-   ========================================================= */
-.page{display:none;position:relative;z-index:1;}
-.page.active{display:block;}
-
-/* =========================================================
-   PAGE 1 — LINK TREE
-   ========================================================= */
-#page-links{
-  min-height:calc(100vh - 56px);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:2.5rem 1.2rem 3rem;
-}
-#page-links.active{display:flex;flex-direction:column;}
-
-.profile-head{
-  text-align:center;
-  margin-bottom:2.2rem;
-  animation:fadeUp .7s .1s ease both;
-}
-.avatar-ring{
-  position:relative;
-  display:inline-block;
-  margin-bottom:1rem;
-}
-.avatar-ring::before{
-  content:'';
-  position:absolute;inset:-4px;
-  border-radius:50%;
-  background:conic-gradient(var(--g1),var(--g2),var(--purple),var(--pink),var(--g1));
-  animation:spin 4s linear infinite;
-  z-index:0;
-}
-@keyframes spin{to{transform:rotate(360deg);}}
-.avatar-inner{
-  position:relative;z-index:1;
-  width:96px;height:96px;
-  border-radius:50%;
-  background:rgba(0,255,136,.1);
-  border:3px solid var(--bg-dark);
-  display:flex;align-items:center;justify-content:center;
-  font-size:42px;
-  backdrop-filter:blur(8px);
-}
-.profile-name{
-  font-family:'Orbitron',sans-serif;
-  font-size:1.6rem;font-weight:900;
-  color:var(--g1);
-  text-shadow:0 0 24px rgba(0,255,136,.5);
-  letter-spacing:1px;
-  margin-bottom:.3rem;
-}
-.profile-bio{
-  font-size:14px;color:var(--muted);
-  letter-spacing:.5px;
-  max-width:280px;
-  margin:0 auto .8rem;
-  line-height:1.6;
-}
-.profile-badges{
-  display:flex;gap:8px;justify-content:center;flex-wrap:wrap;
-}
-.pbadge{
-  padding:3px 10px;
-  border-radius:100px;
-  font-size:11px;
-  font-family:'JetBrains Mono',monospace;
-}
-.pbadge.green{background:rgba(0,255,136,.12);border:1px solid rgba(0,255,136,.3);color:var(--g1);}
-.pbadge.cyan{background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.3);color:var(--g2);}
-.pbadge.pink{background:rgba(255,45,120,.1);border:1px solid rgba(255,45,120,.3);color:var(--pink);}
-
-/* LINK BUTTONS */
-.links-list{
-  width:100%;
-  max-width:440px;
-  display:flex;
-  flex-direction:column;
-  gap:.85rem;
-}
-
-.link-btn{
-  display:flex;
-  align-items:center;
-  gap:14px;
-  padding:14px 20px;
-  background:var(--glass-bg);
-  backdrop-filter:blur(16px);
-  border:1px solid var(--glass-border);
-  border-radius:14px;
-  color:var(--text);
+.nav-brand{
+  display:flex;align-items:center;gap:10px;
   text-decoration:none;
-  font-family:'Rajdhani',sans-serif;
-  font-size:16px;font-weight:700;
-  letter-spacing:.5px;
-  transition:all .25s;
-  position:relative;
-  overflow:hidden;
-  cursor:pointer;
-  animation:fadeUp .6s ease both;
 }
-.link-btn::before{
-  content:'';
-  position:absolute;inset:0;
-  background:linear-gradient(120deg,transparent 0%,rgba(255,255,255,.05) 50%,transparent 100%);
-  transform:translateX(-100%);
-  transition:transform .4s ease;
-}
-.link-btn:hover::before{transform:translateX(100%);}
-.link-btn:hover{
-  background:var(--glass-hover);
-  transform:translateY(-2px) scale(1.01);
-  box-shadow:0 8px 32px rgba(0,0,0,.3);
-}
-.link-btn:active{transform:translateY(0) scale(.99);}
-
-.link-icon{
-  width:44px;height:44px;
-  border-radius:10px;
+.nav-logo-icon{
+  width:34px;height:34px;
+  background:linear-gradient(135deg,var(--forge),var(--blue));
+  clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
   display:flex;align-items:center;justify-content:center;
-  font-size:22px;
+  font-size:14px;font-weight:800;color:#fff;
+  font-family:'Syne',sans-serif;
   flex-shrink:0;
 }
-.link-text{flex:1;}
-.link-title{display:block;font-size:15px;font-weight:700;letter-spacing:.3px;}
-.link-sub{display:block;font-size:11px;color:var(--muted);letter-spacing:.3px;margin-top:1px;}
-.link-arrow{
-  font-size:18px;color:var(--muted);
-  transition:transform .2s,color .2s;
+.nav-brand-name{
+  font-family:'Syne',sans-serif;
+  font-size:1rem;font-weight:800;
+  letter-spacing:.5px;
+  color:var(--white);
 }
-.link-btn:hover .link-arrow{transform:translateX(4px);color:var(--text);}
+.nav-brand-name span{color:var(--forge);}
+.nav-links{display:flex;gap:2rem;align-items:center;}
+.nav-links a{
+  font-size:13px;font-weight:500;
+  letter-spacing:.3px;
+  color:var(--muted2);
+  text-decoration:none;
+  transition:color .2s;
+}
+.nav-links a:hover{color:var(--white);}
+.nav-cta{
+  padding:8px 22px;
+  background:var(--forge);
+  color:#fff;
+  border:none;
+  font-family:'Syne',sans-serif;
+  font-size:13px;font-weight:700;
+  letter-spacing:.5px;
+  cursor:pointer;
+  text-decoration:none;
+  clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+  transition:all .2s;
+}
+.nav-cta:hover{background:var(--forge2);transform:translateY(-1px);}
 
-/* Colored borders per platform */
-.lb-yt{border-color:rgba(255,0,0,.25);}
-.lb-yt:hover{border-color:rgba(255,0,0,.5);box-shadow:0 8px 32px rgba(255,0,0,.12);}
-.lb-yt .link-icon{background:rgba(255,0,0,.12);}
-
-.lb-dc{border-color:rgba(88,101,242,.25);}
-.lb-dc:hover{border-color:rgba(88,101,242,.5);box-shadow:0 8px 32px rgba(88,101,242,.12);}
-.lb-dc .link-icon{background:rgba(88,101,242,.12);}
-
-.lb-rb{border-color:rgba(0,162,255,.25);}
-.lb-rb:hover{border-color:rgba(0,162,255,.5);box-shadow:0 8px 32px rgba(0,162,255,.12);}
-.lb-rb .link-icon{background:rgba(0,162,255,.12);}
-
-.lb-ig{border-color:rgba(225,48,108,.25);}
-.lb-ig:hover{border-color:rgba(225,48,108,.5);box-shadow:0 8px 32px rgba(225,48,108,.12);}
-.lb-ig .link-icon{background:rgba(225,48,108,.12);}
-
-.lb-tt{border-color:rgba(255,0,80,.25);}
-.lb-tt:hover{border-color:rgba(255,0,80,.5);box-shadow:0 8px 32px rgba(255,0,80,.12);}
-.lb-tt .link-icon{background:rgba(255,0,80,.12);}
-
-.lb-shop{border-color:rgba(0,255,136,.2);}
-.lb-shop:hover{border-color:rgba(0,255,136,.5);box-shadow:0 8px 32px rgba(0,255,136,.1);}
-.lb-shop .link-icon{background:rgba(0,255,136,.1);}
-
-.lb-web{border-color:rgba(191,95,255,.25);}
-.lb-web:hover{border-color:rgba(191,95,255,.5);box-shadow:0 8px 32px rgba(191,95,255,.12);}
-.lb-web .link-icon{background:rgba(191,95,255,.1);}
-
-/* STATS ROW */
-.stats-row{
-  display:flex;gap:1.5rem;
-  margin:1.8rem 0 .2rem;
+/* ════════════════════════════════════════
+   HERO
+════════════════════════════════════════ */
+#hero{
+  position:relative;z-index:1;
+  min-height:100vh;
+  display:flex;flex-direction:column;
   justify-content:center;
+  padding:0 3rem;
+  overflow:hidden;
 }
-.stat-item{
-  text-align:center;
-  background:var(--glass-bg);
-  backdrop-filter:blur(12px);
-  border:1px solid var(--glass-border);
-  border-radius:10px;
-  padding:10px 18px;
-  min-width:80px;
-  animation:fadeUp .6s ease both;
+.hero-eyebrow{
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:1.5rem;
+  opacity:0;animation:fadeUp .8s .2s ease forwards;
 }
-.stat-num{
-  font-family:'Orbitron',sans-serif;
-  font-size:18px;font-weight:700;
-  color:var(--g1);
+.hero-tag{
+  font-family:'Syne Mono',monospace;
+  font-size:11px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--forge);
+  padding:4px 12px;
+  border:1px solid rgba(255,107,43,.3);
+  background:rgba(255,107,43,.06);
+}
+.hero-flag{font-size:18px;}
+
+.hero-title{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(3.5rem,10vw,9rem);
+  font-weight:800;
+  line-height:.95;
+  letter-spacing:-3px;
+  margin-bottom:2rem;
+  opacity:0;animation:fadeUp .8s .4s ease forwards;
+}
+.hero-title .line-forge{
+  display:block;
+  background:linear-gradient(135deg,var(--forge) 0%,var(--forge2) 40%,var(--blue2) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero-title .line-dim{
+  display:block;
+  color:var(--border2);
+  -webkit-text-stroke:1px var(--border2);
+}
+
+.hero-sub{
+  max-width:480px;
+  font-size:clamp(15px,1.5vw,18px);
+  font-weight:300;
+  line-height:1.8;
+  color:var(--muted2);
+  margin-bottom:2.5rem;
+  opacity:0;animation:fadeUp .8s .6s ease forwards;
+}
+.hero-actions{
+  display:flex;gap:1rem;flex-wrap:wrap;
+  opacity:0;animation:fadeUp .8s .8s ease forwards;
+}
+.btn-primary{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:14px 32px;
+  background:linear-gradient(135deg,var(--forge),var(--blue));
+  color:#fff;
+  border:none;
+  font-family:'Syne',sans-serif;
+  font-size:14px;font-weight:700;letter-spacing:1px;
+  text-decoration:none;
+  cursor:pointer;
+  clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);
+  transition:all .25s;
+}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(255,107,43,.3);}
+.btn-ghost{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:14px 32px;
+  background:transparent;
+  color:var(--white);
+  border:1px solid var(--border2);
+  font-family:'Syne',sans-serif;
+  font-size:14px;font-weight:700;letter-spacing:1px;
+  text-decoration:none;
+  cursor:pointer;
+  transition:all .25s;
+}
+.btn-ghost:hover{border-color:var(--blue2);color:var(--blue2);transform:translateY(-3px);}
+
+/* Hero stats */
+.hero-stats{
+  position:absolute;right:3rem;bottom:3rem;
+  display:flex;flex-direction:column;gap:2rem;
+  opacity:0;animation:fadeIn 1s 1.2s ease forwards;
+}
+.hstat{text-align:right;}
+.hstat-num{
+  font-family:'Syne',sans-serif;
+  font-size:2rem;font-weight:800;
+  color:var(--white);
+  line-height:1;
+}
+.hstat-num .accent{color:var(--forge);}
+.hstat-lbl{
+  font-family:'Syne Mono',monospace;
+  font-size:10px;letter-spacing:2px;
+  color:var(--muted);margin-top:2px;
+}
+
+/* Big BG text */
+.hero-bgtext{
+  position:absolute;
+  right:-2rem;top:50%;transform:translateY(-50%);
+  font-family:'Syne',sans-serif;
+  font-size:clamp(150px,22vw,300px);
+  font-weight:800;
+  color:transparent;
+  -webkit-text-stroke:1px rgba(79,127,255,0.05);
+  pointer-events:none;user-select:none;
+  letter-spacing:-10px;
+  line-height:1;
+}
+
+/* Scroll indicator */
+.scroll-ind{
+  position:absolute;bottom:2.5rem;left:3rem;
+  display:flex;align-items:center;gap:10px;
+  font-family:'Syne Mono',monospace;
+  font-size:10px;letter-spacing:2px;
+  color:var(--muted);
+  opacity:0;animation:fadeIn 1s 1.4s ease forwards;
+}
+.scroll-line{width:50px;height:1px;background:var(--muted);position:relative;overflow:hidden;}
+.scroll-line::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:var(--blue2);animation:slideRight 2s infinite;}
+@keyframes slideRight{0%{left:-100%;}100%{left:100%;}}
+
+/* ════════════════════════════════════════
+   SECTION HEADERS
+════════════════════════════════════════ */
+.sec-header{margin-bottom:3rem;}
+.sec-label{
+  font-family:'Syne Mono',monospace;
+  font-size:10px;letter-spacing:4px;text-transform:uppercase;
+  color:var(--forge);
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:.8rem;
+}
+.sec-label::before{content:'';width:24px;height:1px;background:var(--forge);}
+.sec-title{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(1.8rem,4vw,3.2rem);
+  font-weight:800;
+  letter-spacing:-1px;
+  line-height:1.1;
+}
+.sec-title span{color:var(--forge);}
+
+/* ════════════════════════════════════════
+   SECTION WRAPPER
+════════════════════════════════════════ */
+section{
+  position:relative;z-index:1;
+  padding:6rem 3rem;
+}
+section+section{border-top:1px solid var(--border);}
+
+/* ════════════════════════════════════════
+   GAMES SECTION
+════════════════════════════════════════ */
+#games{background:var(--bg);}
+.games-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:1px;
+  background:var(--border);
+  border:1px solid var(--border);
+}
+.game-card{
+  background:var(--bg);
+  padding:2.5rem;
+  position:relative;
+  overflow:hidden;
+  transition:background .2s;
+  cursor:pointer;
+}
+.game-card::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;
+  height:2px;
+  background:linear-gradient(90deg,var(--forge),var(--blue));
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .35s ease;
+}
+.game-card:hover{background:var(--surface);}
+.game-card:hover::before{transform:scaleX(1);}
+.game-card:hover .gc-arrow{transform:translate(4px,-4px);color:var(--forge);}
+
+.gc-emoji{
+  font-size:2.8rem;
+  margin-bottom:1.2rem;
+  display:block;
+  filter:drop-shadow(0 0 12px rgba(255,107,43,0.3));
+}
+.gc-tag{
+  font-family:'Syne Mono',monospace;
+  font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--forge);
+  margin-bottom:.6rem;
   display:block;
 }
-.stat-lbl{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
-
-.link-footer{
-  text-align:center;margin-top:2rem;
-  font-size:11px;color:var(--muted);
-  letter-spacing:1px;
-  animation:fadeUp .6s 1.2s ease both;
+.gc-name{
+  font-family:'Syne',sans-serif;
+  font-size:1.15rem;font-weight:800;
+  letter-spacing:-.3px;
+  margin-bottom:.6rem;
+  line-height:1.2;
 }
-
-/* =========================================================
-   PAGE 2 — SZERVER FIGYELŐ
-   ========================================================= */
-#page-servers{
-  min-height:calc(100vh - 56px);
-  padding:2.5rem 1.5rem 3rem;
+.gc-desc{
+  font-size:13px;font-weight:300;
+  color:var(--muted2);line-height:1.7;
+  margin-bottom:1.5rem;
 }
-
-.server-header{
-  text-align:center;
-  margin-bottom:2.5rem;
-  animation:fadeUp .6s ease both;
+.gc-footer{
+  display:flex;justify-content:space-between;align-items:center;
 }
-.server-header h1{
-  font-family:'Orbitron',sans-serif;
-  font-size:clamp(1.4rem,4vw,2.2rem);
-  font-weight:900;
-  color:var(--g1);
-  text-shadow:0 0 24px rgba(0,255,136,.4);
-  margin-bottom:.5rem;
-  letter-spacing:1px;
-}
-.server-header p{color:var(--muted);font-size:14px;letter-spacing:.3px;}
-
-/* FILTER BAR */
-.filter-bar{
-  display:flex;
-  gap:.5rem;
-  flex-wrap:wrap;
-  justify-content:center;
-  margin-bottom:2rem;
-  animation:fadeUp .5s .15s ease both;
-}
-.filter-btn{
-  padding:7px 18px;
-  background:var(--glass-bg);
-  backdrop-filter:blur(10px);
-  border:1px solid var(--glass-border);
-  color:var(--muted);
-  font-family:'Rajdhani',sans-serif;
-  font-size:13px;font-weight:600;
-  letter-spacing:1px;text-transform:uppercase;
-  cursor:pointer;
-  border-radius:100px;
-  transition:all .2s;
-}
-.filter-btn:hover{color:var(--text);border-color:rgba(255,255,255,.2);}
-.filter-btn.active{
-  background:rgba(0,255,136,.1);
-  border-color:var(--g1);
-  color:var(--g1);
-  box-shadow:0 0 14px rgba(0,255,136,.15);
-}
-
-/* SERVER GRID */
-.server-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
-  gap:1.2rem;
-  max-width:1100px;
-  margin:0 auto;
-}
-
-.server-card{
-  background:var(--glass-bg);
-  backdrop-filter:blur(16px);
-  border:1px solid var(--glass-border);
-  border-radius:16px;
-  overflow:hidden;
-  transition:all .25s;
-  animation:fadeUp .5s ease both;
-  display:flex;flex-direction:column;
-}
-.server-card:hover{
-  transform:translateY(-4px);
-  border-color:rgba(0,255,136,.25);
-  box-shadow:0 12px 40px rgba(0,0,0,.4),0 0 0 1px rgba(0,255,136,.08);
-}
-.server-card.hidden{display:none;}
-
-/* Card thumbnail */
-.card-thumb{
-  position:relative;
-  height:150px;
-  overflow:hidden;
-  background:#0c1428;
-}
-.card-thumb-bg{
-  width:100%;height:100%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:64px;
-  position:relative;
-}
-.card-thumb-bg::before{
-  content:'';
-  position:absolute;inset:0;
-  background:inherit;
-  filter:blur(0);
-}
-.thumb-overlay{
-  position:absolute;inset:0;
-  background:linear-gradient(0deg,rgba(5,8,16,.9) 0%,transparent 60%);
-}
-.card-status{
-  position:absolute;top:10px;right:10px;
-  padding:3px 10px;
-  border-radius:100px;
-  font-size:11px;font-family:'JetBrains Mono',monospace;
-  letter-spacing:.5px;
-}
-.status-live{background:rgba(0,255,136,.15);border:1px solid rgba(0,255,136,.4);color:var(--g1);}
-.status-live::before{content:'● ';animation:blink 1.5s step-end infinite;}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.status-soon{background:rgba(255,230,0,.1);border:1px solid rgba(255,230,0,.3);color:var(--yellow);}
-.status-popular{background:rgba(255,45,120,.1);border:1px solid rgba(255,45,120,.3);color:var(--pink);}
-
-.player-count{
-  position:absolute;bottom:10px;left:12px;
-  font-family:'JetBrains Mono',monospace;
-  font-size:12px;color:rgba(255,255,255,.7);
-  display:flex;align-items:center;gap:5px;
-}
-
-/* Card body */
-.card-body{padding:1rem 1.1rem;flex:1;display:flex;flex-direction:column;gap:.6rem;}
-.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;}
-.card-name{
-  font-family:'Orbitron',sans-serif;
-  font-size:13px;font-weight:700;
-  color:var(--text);letter-spacing:.5px;
-  line-height:1.3;
-}
-.card-category{
-  padding:2px 8px;
-  border-radius:100px;
-  font-size:10px;font-family:'JetBrains Mono',monospace;
-  white-space:nowrap;
-  flex-shrink:0;
-}
-.cat-horror{background:rgba(255,45,120,.12);border:1px solid rgba(255,45,120,.3);color:var(--pink);}
-.cat-tycoon{background:rgba(255,230,0,.1);border:1px solid rgba(255,230,0,.3);color:var(--yellow);}
-.cat-roleplay{background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.3);color:var(--g2);}
-.cat-obby{background:rgba(191,95,255,.1);border:1px solid rgba(191,95,255,.3);color:var(--purple);}
-.cat-fps{background:rgba(255,120,0,.1);border:1px solid rgba(255,120,0,.3);color:#ff7800;}
-.cat-sim{background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.25);color:var(--g1);}
-.cat-rpg{background:rgba(100,200,255,.1);border:1px solid rgba(100,200,255,.3);color:#64c8ff;}
-
-.card-dev{
-  font-size:11px;color:var(--muted);
-  display:flex;align-items:center;gap:5px;
-}
-.dev-flag{font-size:13px;}
-.card-desc{
-  font-size:13px;color:#7080a0;
-  line-height:1.65;
-  flex:1;
-}
-.card-footer{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-top:.4rem;
-  gap:.5rem;
-}
-.card-rating{
-  display:flex;align-items:center;gap:4px;
-  font-size:12px;color:var(--yellow);
-  font-family:'JetBrains Mono',monospace;
-}
-.play-btn{
-  padding:8px 18px;
-  background:rgba(0,255,136,.1);
-  border:1px solid rgba(0,255,136,.35);
-  color:var(--g1);
-  font-family:'Orbitron',sans-serif;
-  font-size:11px;font-weight:700;
-  letter-spacing:1.5px;
-  cursor:pointer;
-  border-radius:8px;
+.gc-play{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:7px 16px;
+  background:rgba(255,107,43,.1);
+  border:1px solid rgba(255,107,43,.3);
+  color:var(--forge2);
+  font-family:'Syne',sans-serif;
+  font-size:11px;font-weight:700;letter-spacing:1px;
   text-decoration:none;
   transition:all .2s;
+  clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
+}
+.gc-play:hover{background:var(--forge);color:#fff;}
+.gc-arrow{
+  font-size:1.1rem;color:var(--muted);
+  transition:all .2s;
+}
+
+/* ════════════════════════════════════════
+   TEAM SECTION
+════════════════════════════════════════ */
+#team{background:var(--surface);}
+.team-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:1rem;
+}
+.team-card{
+  background:var(--bg);
+  border:1px solid var(--border);
+  padding:1.5rem;
+  position:relative;
+  overflow:hidden;
+  transition:all .25s;
+}
+.team-card::after{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(79,127,255,0.04),transparent);
+  opacity:0;transition:opacity .25s;
+}
+.team-card:hover{border-color:var(--border2);transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.4);}
+.team-card:hover::after{opacity:1;}
+
+.tc-role-badge{
   display:inline-flex;align-items:center;gap:6px;
+  font-family:'Syne Mono',monospace;
+  font-size:9px;letter-spacing:2px;text-transform:uppercase;
+  padding:3px 8px;
+  border-radius:2px;
+  margin-bottom:1rem;
 }
-.play-btn:hover{
-  background:var(--g1);
-  color:#000;
-  box-shadow:0 0 18px rgba(0,255,136,.3);
+.role-owner{background:rgba(255,107,43,.12);border:1px solid rgba(255,107,43,.3);color:var(--forge2);}
+.role-admin{background:rgba(79,127,255,.12);border:1px solid rgba(79,127,255,.3);color:var(--blue2);}
+.role-dev{background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.25);color:var(--cyan);}
+.role-tulaj{background:rgba(255,50,100,.12);border:1px solid rgba(255,50,100,.3);color:#ff6b8a;}
+
+.tc-avatar{
+  width:52px;height:52px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--forge),var(--blue));
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;
+  margin-bottom:1rem;
+  position:relative;z-index:1;
+}
+.tc-avatar.online::after{
+  content:'';
+  position:absolute;bottom:1px;right:1px;
+  width:12px;height:12px;
+  background:#23a559;
+  border:2px solid var(--bg);
+  border-radius:50%;
+}
+.tc-name{
+  font-family:'Syne',sans-serif;
+  font-size:.95rem;font-weight:800;
+  letter-spacing:-.2px;
+  margin-bottom:.2rem;
+  line-height:1.2;
+}
+.tc-handle{
+  font-family:'Syne Mono',monospace;
+  font-size:10px;color:var(--muted);
+  letter-spacing:.5px;
 }
 
-/* NO RESULTS */
-.no-results{
-  grid-column:1/-1;
+/* ════════════════════════════════════════
+   ABOUT / STATS
+════════════════════════════════════════ */
+#about{background:var(--bg);}
+.about-inner{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:4rem;
+  align-items:center;
+}
+.about-text p{
+  font-size:clamp(15px,1.4vw,17px);
+  font-weight:300;
+  line-height:1.9;
+  color:var(--muted2);
+  margin-bottom:1.2rem;
+}
+.about-text p strong{color:var(--white);font-weight:500;}
+.stats-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1px;
+  background:var(--border);
+  border:1px solid var(--border);
+}
+.stat-box{
+  background:var(--surface);
+  padding:2rem;
   text-align:center;
-  padding:4rem;
+}
+.stat-box-num{
+  font-family:'Syne',sans-serif;
+  font-size:2.6rem;font-weight:800;
+  letter-spacing:-2px;
+  line-height:1;
+  margin-bottom:.3rem;
+  background:linear-gradient(135deg,var(--forge),var(--blue2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.stat-box-lbl{
+  font-family:'Syne Mono',monospace;
+  font-size:9px;letter-spacing:2px;
+  text-transform:uppercase;
   color:var(--muted);
-  font-size:14px;
-}
-.no-results .nr-icon{font-size:3rem;margin-bottom:1rem;display:block;}
-
-/* =========================================================
-   SHARED ANIMATIONS
-   ========================================================= */
-@keyframes fadeUp{
-  from{opacity:0;transform:translateY(20px);}
-  to{opacity:1;transform:translateY(0);}
 }
 
-/* MOBILE */
-@media(max-width:500px){
-  .stats-row{gap:1rem;}
-  .stat-item{padding:8px 12px;min-width:65px;}
-  nav{padding:0 1rem;}
+/* ════════════════════════════════════════
+   JOIN / DISCORD CTA
+════════════════════════════════════════ */
+#join{
+  background:linear-gradient(135deg,rgba(255,107,43,0.05) 0%,rgba(79,127,255,0.05) 100%);
+  border-top:1px solid var(--border)!important;
+  text-align:center;
+}
+.join-inner{max-width:600px;margin:0 auto;}
+.join-title{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(2rem,5vw,4rem);
+  font-weight:800;
+  letter-spacing:-2px;
+  line-height:1.05;
+  margin-bottom:1.2rem;
+}
+.join-title .g1{color:var(--forge);}
+.join-title .g2{color:var(--blue2);}
+.join-sub{
+  font-size:16px;font-weight:300;
+  color:var(--muted2);line-height:1.7;
+  margin-bottom:2.5rem;
+  max-width:440px;margin-left:auto;margin-right:auto;
+}
+.discord-btn{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:16px 40px;
+  background:#5865f2;
+  color:#fff;
+  border:none;
+  font-family:'Syne',sans-serif;
+  font-size:16px;font-weight:700;letter-spacing:.5px;
+  text-decoration:none;
+  cursor:pointer;
+  clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);
+  transition:all .25s;
+  box-shadow:0 8px 32px rgba(88,101,242,.3);
+}
+.discord-btn:hover{background:#4752c4;transform:translateY(-3px);box-shadow:0 16px 48px rgba(88,101,242,.4);}
+.discord-icon{font-size:22px;}
+
+/* ════════════════════════════════════════
+   FOOTER
+════════════════════════════════════════ */
+footer{
+  position:relative;z-index:1;
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  padding:2rem 3rem;
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:1rem;
+}
+.footer-brand{
+  font-family:'Syne',sans-serif;
+  font-size:.9rem;font-weight:800;
+  color:var(--muted);
+}
+.footer-brand span{color:var(--forge);}
+.footer-copy{
+  font-family:'Syne Mono',monospace;
+  font-size:10px;letter-spacing:1px;
+  color:var(--muted);
+}
+
+/* ════════════════════════════════════════
+   REVEAL ANIMATIONS
+════════════════════════════════════════ */
+.reveal{
+  opacity:0;transform:translateY(24px);
+  transition:opacity .7s ease,transform .7s ease;
+}
+.reveal.vis{opacity:1;transform:none;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+
+/* ════════════════════════════════════════
+   MOBILE
+════════════════════════════════════════ */
+@media(max-width:768px){
+  nav{padding:0 1.2rem;}
+  .nav-links{display:none;}
+  section{padding:4rem 1.2rem;}
+  #hero{padding:0 1.2rem;}
+  .hero-stats{display:none;}
+  .about-inner{grid-template-columns:1fr;}
+  footer{padding:1.5rem 1.2rem;}
 }
 </style>
 </head>
 <body>
 
-<!-- BG ORBS -->
-<div class="orb orb1"></div>
-<div class="orb orb2"></div>
-<div class="orb orb3"></div>
+<canvas id="bg-canvas"></canvas>
 
-<!-- NAV -->
+<!-- ════ NAV ════ -->
 <nav>
-  <div class="nav-logo">KRIS<em>3D</em>LAB</div>
-  <div class="nav-pills">
-    <button class="pill active" onclick="showPage('links',this)">🔗 Linkek</button>
-    <button class="pill" onclick="showPage('servers',this)">🎮 Szerverek</button>
+  <a class="nav-brand" href="#">
+    <div class="nav-logo-icon">DF</div>
+    <div class="nav-brand-name">Dream<span>Forge</span> Studios</div>
+  </a>
+  <div class="nav-links">
+    <a href="#games">Játékok</a>
+    <a href="#team">Csapat</a>
+    <a href="#about">Rólunk</a>
+    <a href="https://discord.gg/gGUrMARY7t" target="_blank" class="nav-cta">Discord</a>
   </div>
 </nav>
 
-<!-- ==================== PAGE: LINKS ==================== -->
-<div class="page active" id="page-links">
+<!-- ════ HERO ════ -->
+<div id="hero">
+  <div class="hero-bgtext">DFS</div>
 
-  <!-- PROFILE HEAD -->
-  <div class="profile-head">
-    <div class="avatar-ring">
-      <div class="avatar-inner">👾</div>
+  <div class="hero-eyebrow">
+    <div class="hero-tag">Magyar Roblox Stúdió</div>
+    <div class="hero-flag">🇭🇺</div>
+  </div>
+
+  <h1 class="hero-title">
+    <span class="line-forge">DreamForge</span>
+    <span class="line-dim">Studios</span>
+  </h1>
+
+  <p class="hero-sub">
+    Magyar Roblox játékokat fejlesztünk szenvedéllyel.
+    Egyedi élmények, aktív közösség, folyamatos fejlesztés.
+    Ez vagyunk mi.
+  </p>
+
+  <div class="hero-actions">
+    <a href="#games" class="btn-primary">▶ Játékaink</a>
+    <a href="https://discord.gg/gGUrMARY7t" target="_blank" class="btn-ghost">💬 Discord Szerver</a>
+  </div>
+
+  <div class="hero-stats">
+    <div class="hstat">
+      <div class="hstat-num">4<span class="accent">+</span></div>
+      <div class="hstat-lbl">Aktív játék</div>
     </div>
-    <div class="profile-name">Kris3DLab</div>
-    <div class="profile-bio">Magyar Roblox játék fejlesztő<br>Escape · Garden · és még több 🇭🇺</div>
-    <div class="profile-badges">
-      <span class="pbadge green">🔥 Creator</span>
-      <span class="pbadge cyan">💎 Dev</span>
-      <span class="pbadge pink">🇭🇺 Magyar</span>
+    <div class="hstat">
+      <div class="hstat-num">5<span class="accent">+</span></div>
+      <div class="hstat-lbl">Csapattag</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-num">🇭🇺</div>
+      <div class="hstat-lbl">Magyar közösség</div>
     </div>
   </div>
 
-  <!-- STATS -->
-  <div class="stats-row">
-    <div class="stat-item" style="animation-delay:.2s">
-      <span class="stat-num" id="cnt-yt">0</span>
-      <span class="stat-lbl">Feliratkozó</span>
-    </div>
-    <div class="stat-item" style="animation-delay:.3s">
-      <span class="stat-num" id="cnt-dc">0</span>
-      <span class="stat-lbl">Discord tag</span>
-    </div>
-    <div class="stat-item" style="animation-delay:.4s">
-      <span class="stat-num" id="cnt-rb">0</span>
-      <span class="stat-lbl">Roblox követő</span>
-    </div>
-  </div>
-
-  <!-- LINKS -->
-  <div class="links-list">
-
-    <a href="https://discord.gg/FYFN7MHkTG" target="_blank" class="link-btn lb-dc" style="animation-delay:.15s">
-      <div class="link-icon">💬</div>
-      <div class="link-text">
-        <span class="link-title">Discord Szerver</span>
-        <span class="link-sub">Csatlakozz a közösséghez!</span>
-      </div>
-      <span class="link-arrow">→</span>
-    </a>
-
-    <a href="https://www.roblox.com/users/8796138681/profile" target="_blank" class="link-btn lb-rb" style="animation-delay:.22s">
-      <div class="link-icon">🎮</div>
-      <div class="link-text">
-        <span class="link-title">Roblox Profil</span>
-        <span class="link-sub">Kövesd a profilomat!</span>
-      </div>
-      <span class="link-arrow">→</span>
-    </a>
-
-    <a href="https://www.roblox.com/games/73532844100795/Magyar-Escape-Tsunami-For-Youtubers" target="_blank" class="link-btn lb-shop" style="animation-delay:.29s">
-      <div class="link-icon">🌊</div>
-      <div class="link-text">
-        <span class="link-title">Magyar Escape Tsunami</span>
-        <span class="link-sub">For Youtubers — játszd most!</span>
-      </div>
-      <span class="link-arrow">→</span>
-    </a>
-
-    <a href="https://www.roblox.com/games/79438847818254/Magyar-Grow-a-Garden" target="_blank" class="link-btn lb-web" style="animation-delay:.36s">
-      <div class="link-icon">🌱</div>
-      <div class="link-text">
-        <span class="link-title">Magyar Grow a Garden</span>
-        <span class="link-sub">Termeszd meg a kertedet!</span>
-      </div>
-      <span class="link-arrow">→</span>
-    </a>
-
-  </div>
-
-  <div class="link-footer">© 2025 Kris3DLab · Minden jog fenntartva 🔒</div>
-</div>
-
-<!-- ==================== PAGE: SERVERS ==================== -->
-<div class="page" id="page-servers">
-
-  <div class="server-header">
-    <h1>🇭🇺 MAGYAR ROBLOX SZERVEREK</h1>
-    <p>A legjobb magyar fejlesztésű és magyar közösségű Roblox játékok egy helyen</p>
-  </div>
-
-  <!-- FILTER BAR -->
-  <div class="filter-bar">
-    <button class="filter-btn active" onclick="filterServers('mind',this)">✦ Mind</button>
-    <button class="filter-btn" onclick="filterServers('obby',this)">🌊 Escape</button>
-    <button class="filter-btn" onclick="filterServers('sim',this)">🌱 Szimulátor</button>
-  </div>
-
-  <!-- GRID -->
-  <div class="server-grid" id="server-grid">
-
-    <div class="server-card" data-cat="obby">
-      <div class="card-thumb">
-        <div class="card-thumb-bg" style="background:linear-gradient(135deg,#001a3a,#003a6a);">🌊</div>
-        <div class="thumb-overlay"></div>
-        <span class="card-status status-live">Élő</span>
-        <div class="player-count">👥 Kris3DLab játéka</div>
-      </div>
-      <div class="card-body">
-        <div class="card-top">
-          <div class="card-name">Magyar Escape Tsunami</div>
-          <span class="card-category cat-obby">Escape</span>
-        </div>
-        <div class="card-dev"><span class="dev-flag">🇭🇺</span> Fejlesztő: Kris3DLab</div>
-        <div class="card-desc">Menekülj a cunami elől! For Youtubers — magyar fejlesztésű escape játék. Próbáld ki te is és nézd meg hogy bírod!</div>
-        <div class="card-footer">
-          <div class="card-rating">⭐ Kris3DLab</div>
-          <a href="https://www.roblox.com/games/73532844100795/Magyar-Escape-Tsunami-For-Youtubers" target="_blank" class="play-btn">▶ JÁTSZOK</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="server-card" data-cat="sim">
-      <div class="card-thumb">
-        <div class="card-thumb-bg" style="background:linear-gradient(135deg,#002a10,#005020);">🌱</div>
-        <div class="thumb-overlay"></div>
-        <span class="card-status status-live">Élő</span>
-        <div class="player-count">👥 Kris3DLab játéka</div>
-      </div>
-      <div class="card-body">
-        <div class="card-top">
-          <div class="card-name">Magyar Grow a Garden</div>
-          <span class="card-category cat-sim">Sim</span>
-        </div>
-        <div class="card-dev"><span class="dev-flag">🇭🇺</span> Fejlesztő: Kris3DLab</div>
-        <div class="card-desc">Termeszd meg a saját kertedet magyarul! Növények gondozása, fejlesztés és sok szórakozás vár. Az eredeti Grow a Garden magyar változata!</div>
-        <div class="card-footer">
-          <div class="card-rating">⭐ Kris3DLab</div>
-          <a href="https://www.roblox.com/games/79438847818254/Magyar-Grow-a-Garden" target="_blank" class="play-btn">▶ JÁTSZOK</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="no-results" id="no-results" style="display:none;">
-      <span class="nr-icon">🔍</span>
-      Ebben a kategóriában még nincs játék.<br>
-      <span style="color:var(--muted);font-size:12px;">Hamarosan több játék kerül fel!</span>
-    </div>
-
+  <div class="scroll-ind">
+    <div class="scroll-line"></div>
+    scroll
   </div>
 </div>
+
+<!-- ════ GAMES ════ -->
+<section id="games">
+  <div class="sec-header reveal">
+    <div class="sec-label">Játékaink</div>
+    <h2 class="sec-title">Amit mi <span>készítettünk</span></h2>
+  </div>
+  <div class="games-grid reveal">
+
+    <div class="game-card">
+      <span class="gc-emoji">🌱</span>
+      <span class="gc-tag">Szimulátor</span>
+      <div class="gc-name">Magyar Grow a Garden</div>
+      <div class="gc-desc">Termeszd meg a saját kertedet! A világ leghíresebb kertész-szimulátorának magyar változata, tele meglepetésekkel.</div>
+      <div class="gc-footer">
+        <a href="https://www.roblox.com/games/79438847818254/Magyar-Grow-a-Garden" target="_blank" class="gc-play">▶ Játszom</a>
+        <span class="gc-arrow">↗</span>
+      </div>
+    </div>
+
+    <div class="game-card">
+      <span class="gc-emoji">🌊</span>
+      <span class="gc-tag">Escape</span>
+      <div class="gc-name">Magyar Escape Tsunami For Youtubers</div>
+      <div class="gc-desc">Menekülj a cunami elől YouTuberek társaságában! Adrenalin, humor és non-stop akció egy pályán.</div>
+      <div class="gc-footer">
+        <a href="https://www.roblox.com/games/73532844100795/Magyar-Escape-Tsunami-For-Youtubers" target="_blank" class="gc-play">▶ Játszom</a>
+        <span class="gc-arrow">↗</span>
+      </div>
+    </div>
+
+    <div class="game-card" style="opacity:.6;">
+      <span class="gc-emoji">🥒</span>
+      <span class="gc-tag" style="color:var(--muted2);border-color:rgba(122,127,154,.3);background:rgba(122,127,154,.06);">Hamarosan</span>
+      <div class="gc-name">Uborka Mic Up</div>
+      <div class="gc-desc">Fogd a mikrofont és légy uborka! Egy teljesen egyedi szociális játék — <em>még fejlesztés alatt</em>, hamarosan megjelenik!</div>
+      <div class="gc-footer">
+        <span style="font-family:'Syne Mono',monospace;font-size:11px;letter-spacing:1px;color:var(--muted);padding:7px 16px;border:1px solid var(--border2);">🔒 Hamarosan</span>
+        <span class="gc-arrow">…</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════ TEAM ════ -->
+<section id="team">
+  <div class="sec-header reveal">
+    <div class="sec-label">Csapat</div>
+    <h2 class="sec-title">Az emberek <span>mögöttünk</span></h2>
+  </div>
+  <div class="team-grid reveal">
+
+    <div class="team-card">
+      <div class="tc-role-badge role-owner">⚜️ Fő Tulajdonos</div>
+      <div class="tc-avatar online">👾</div>
+      <div class="tc-name">Kris3DLab</div>
+      <div class="tc-handle">MDFS · discord.gg/gGUrMARY7t</div>
+    </div>
+
+    <div class="team-card">
+      <div class="tc-role-badge role-tulaj">💗 Tulajdonos</div>
+      <div class="tc-avatar online">🧡</div>
+      <div class="tc-name">Benedek</div>
+      <div class="tc-handle">MDFS</div>
+    </div>
+
+    <div class="team-card">
+      <div class="tc-role-badge role-admin">🐒 Admin</div>
+      <div class="tc-avatar">🎮</div>
+      <div class="tc-name">Itzjonny</div>
+      <div class="tc-handle">Roblox</div>
+    </div>
+
+    <div class="team-card">
+      <div class="tc-role-badge role-admin">🐒 Admin</div>
+      <div class="tc-avatar">⚙️</div>
+      <div class="tc-name">Xytax</div>
+      <div class="tc-handle">MDFS · Roblox Developer · Builder · Modeler</div>
+    </div>
+
+    <div class="team-card">
+      <div class="tc-role-badge role-admin">🐒 Admin</div>
+      <div class="tc-avatar">😸</div>
+      <div class="tc-name">Mosolygó Macska</div>
+      <div class="tc-handle">mosolygotehenthereal</div>
+    </div>
+
+    <div class="team-card">
+      <div class="tc-role-badge role-dev">🧩 Fejlesztő</div>
+      <div class="tc-avatar">🔧</div>
+      <div class="tc-name">Waixy</div>
+      <div class="tc-handle">Fejlesztő</div>
+    </div>
+
+    <div class="team-card">
+      <div class="tc-role-badge role-admin">🎪 Partner Manager</div>
+      <div class="tc-avatar">🔑</div>
+      <div class="tc-name">Kryono</div>
+      <div class="tc-handle">kryon_o · Admin Abuse Szervező</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════ ABOUT ════ -->
+<section id="about">
+  <div class="about-inner">
+    <div class="reveal">
+      <div class="sec-header">
+        <div class="sec-label">Rólunk</div>
+        <h2 class="sec-title">Magyar fejlesztők,<br><span>globális álmok</span></h2>
+      </div>
+      <div class="about-text">
+        <p>A <strong>DreamForge Studios</strong> egy magyar Roblox fejlesztőstúdió, amelyet a játékok iránti szenvedély hozott létre. Célunk egyedi, szórakoztató élményeket alkotni a magyar közösség számára.</p>
+        <p>Csapatunk fejlesztőkből, builderekből és kreatív elmékből áll. Minden játékunk <strong>100%-ban magyar szellemiségű</strong> — az ötlettől a megvalósításig.</p>
+        <p>Csatlakozz Discord szerverünkhöz és légy részese a közösségnek. <strong>Együtt nagyobbak vagyunk.</strong></p>
+      </div>
+    </div>
+    <div class="stats-grid reveal">
+      <div class="stat-box">
+        <div class="stat-box-num">2</div>
+        <div class="stat-box-lbl">Kész játék</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-num">7</div>
+        <div class="stat-box-lbl">Csapattag</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-num">100%</div>
+        <div class="stat-box-lbl">Magyar</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-num">∞</div>
+        <div class="stat-box-lbl">Szenvedély</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════ JOIN ════ -->
+<section id="join">
+  <div class="join-inner reveal">
+    <h2 class="join-title">
+      Csatlakozz a<br>
+      <span class="g1">Dream</span><span class="g2">Forge</span> közösséghez
+    </h2>
+    <p class="join-sub">
+      Több száz magyar játékos vár rád a Discord szerverünkön.
+      Értesülj elsőként az újdonságokról, vegyél részt eseményeken!
+    </p>
+    <a href="https://discord.gg/gGUrMARY7t" target="_blank" class="discord-btn">
+      <span class="discord-icon">💬</span>
+      Discord Szerver csatlakozás
+    </a>
+  </div>
+</section>
+
+<!-- ════ FOOTER ════ -->
+<footer>
+  <div class="footer-brand">Dream<span>Forge</span> Studios</div>
+  <div class="footer-copy">© 2025 DreamForge Studios · 🇭🇺 Magyar Roblox Stúdió</div>
+</footer>
 
 <script>
-// =========================================================
-// NAV
-// =========================================================
-function showPage(id, btn){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.pill').forEach(b=>b.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  btn.classList.add('active');
+// ══════════════════
+// CANVAS PARTICLES
+// ══════════════════
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;});
+
+const particles = [];
+for(let i=0;i<60;i++){
+  particles.push({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    vx:(Math.random()-.5)*.4,
+    vy:(Math.random()-.5)*.4,
+    r:Math.random()*1.5+.3,
+    alpha:Math.random()*.4+.1,
+    color:Math.random()>.5?`rgba(79,127,255,`:`rgba(255,107,43,`
+  });
 }
 
-// =========================================================
-// COUNTER ANIMATION
-// =========================================================
-function animCount(el, target, suffix, duration){
-  let start = 0;
-  const step = target / (duration / 16);
-  const timer = setInterval(()=>{
-    start = Math.min(start + step, target);
-    const val = Math.floor(start);
-    el.textContent = val >= 1000 ? (val/1000).toFixed(1)+'K' : val;
-    if(start >= target) clearInterval(timer);
-  }, 16);
+function animParticles(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p=>{
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0)p.x=canvas.width;
+    if(p.x>canvas.width)p.x=0;
+    if(p.y<0)p.y=canvas.height;
+    if(p.y>canvas.height)p.y=0;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=p.color+p.alpha+')';
+    ctx.fill();
+  });
+  // Draw connections
+  for(let i=0;i<particles.length;i++){
+    for(let j=i+1;j<particles.length;j++){
+      const dx=particles[i].x-particles[j].x;
+      const dy=particles[i].y-particles[j].y;
+      const dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist<120){
+        ctx.beginPath();
+        ctx.strokeStyle=`rgba(79,127,255,${(1-dist/120)*.06})`;
+        ctx.lineWidth=.5;
+        ctx.moveTo(particles[i].x,particles[i].y);
+        ctx.lineTo(particles[j].x,particles[j].y);
+        ctx.stroke();
+      }
+    }
+  }
+  requestAnimationFrame(animParticles);
 }
+animParticles();
 
-window.addEventListener('load', ()=>{
-  setTimeout(()=>{
-    animCount(document.getElementById('cnt-yt'), 8700, 'K', 1400);
-    animCount(document.getElementById('cnt-dc'), 2340, '', 1600);
-    animCount(document.getElementById('cnt-rb'), 5200, 'K', 1500);
-  }, 500);
-});
-
-// =========================================================
-// SERVER FILTER
-// =========================================================
-function filterServers(cat, btn){
-  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-
-  const cards = document.querySelectorAll('.server-card[data-cat]');
-  let visible = 0;
-  cards.forEach(card=>{
-    if(cat === 'mind' || card.dataset.cat === cat){
-      card.classList.remove('hidden');
-      visible++;
-    } else {
-      card.classList.add('hidden');
+// ══════════════════
+// SCROLL REVEAL
+// ══════════════════
+const revealObs = new IntersectionObserver(entries=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting){
+      setTimeout(()=>e.target.classList.add('vis'),i*60);
     }
   });
-  document.getElementById('no-results').style.display = visible === 0 ? 'block' : 'none';
-}
+},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(r=>revealObs.observe(r));
 </script>
 </body>
 </html>
